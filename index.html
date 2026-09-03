@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>לוח שנה תשפ״ז — מתנה לראש השנה</title>
+<style>
+  :root{
+    --ink:#2b2320;
+    --ink-soft:#6b5d55;
+    --gold:#b8863b;
+    --gold-soft:#f3e2c4;
+    --pomegranate:#a1332b;
+    --pomegranate-soft:#f4dcd8;
+    --olive:#6b7a3f;
+    --olive-soft:#e6ecd8;
+    --gray:#8a8177;
+    --gray-soft:#eae7e1;
+    --sky:#3a6f8f;
+    --sky-soft:#dcebf1;
+    --paper:#fffdf8;
+    --line:#e4d9c8;
+    --line-strong:#cbb98f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:#5a5450;font-family:"Segoe UI","Arial Hebrew",Tahoma,sans-serif;color:var(--ink);}
+
+  /* ── page shell ───────────────────────────────────────────────── */
+  @page{ size: A4 landscape; margin:0; }
+  .page{
+    width:297mm;height:210mm;
+    margin:14px auto;
+    background:var(--paper);
+    box-shadow:0 4px 18px rgba(0,0,0,.35);
+    position:relative;
+    overflow:hidden;
+    padding:26mm 12mm 8mm 12mm; /* top space reserved for spiral binding */
+  }
+
+  /* ── cover page ───────────────────────────────────────────────── */
+  .cover{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  .cover .year-big{ font-size:88px; font-weight:700; color:var(--pomegranate); letter-spacing:2px; }
+  .cover .greeting{ font-size:34px; font-weight:600; color:var(--ink); margin:6px 0 2px; }
+  .cover .sub{ font-size:16px; color:var(--ink-soft); margin-bottom:26px; }
+  .cover .icons{ display:flex; gap:26px; margin-top:10px; }
+  .cover .icons svg{ width:64px; height:64px; }
+  .cover .caption{ margin-top:30px; font-size:13px; color:var(--ink-soft); }
+
+  .legend{
+    position:absolute; bottom:12mm; left:12mm; right:12mm;
+    display:flex; justify-content:center; gap:22px; flex-wrap:wrap;
+  }
+  .legend-item{ display:flex; align-items:center; gap:6px; font-size:11px; color:var(--ink-soft); }
+  .legend-swatch{ width:11px; height:11px; border-radius:2px; border:1px solid var(--line); flex:none; }
+  .legend-swatch.shabbat{ background:var(--sky-soft); border-color:#bcd7e3; }
+  .legend-swatch.holiday{ background:var(--pomegranate-soft); border-color:#e3bcb6; }
+  .legend-swatch.roshchodesh{ background:var(--olive-soft); border-color:#c9d6ac; }
+  .legend-swatch.chol{ background:var(--gray-soft); border-color:#d6d2ca; }
+  .legend-item .legend-text-sample{ font-weight:600; }
+  .legend-item .legend-text-sample.candle{ color:var(--gold); }
+
+  /* ── month page ───────────────────────────────────────────────── */
+  .month-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:2mm; }
+  .month-head .heb{ font-size:30px; font-weight:700; color:var(--ink); }
+  .month-head .greg{ font-size:16px; color:var(--gold); font-weight:600; }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    grid-template-rows:auto; /* שורת שמות הימים בגובה תוכן בלבד */
+    grid-auto-rows:1fr;      /* כל שאר השורות (התאים עצמם) מתחלקות שוות בשארית */
+    gap:1.5mm;
+    height:calc(100% - 12mm);
+  }
+  .wd{
+    text-align:center;font-size:11px;font-weight:600;color:var(--ink-soft);
+    padding-bottom:1.5mm;border-bottom:1px solid var(--line-strong);
+  }
+  .wd.sat{ color:var(--pomegranate); }
+
+  .cell{
+    border:1px solid var(--line);
+    border-radius:2mm;
+    padding:1mm 2mm;
+    position:relative;
+    display:flex; flex-direction:column;
+    background:var(--paper);
+    min-height:0;
+  }
+  .cell.blank{ border-color:transparent; background:transparent; }
+  /* סדר עדיפות בצביעה כשכמה דברים חלים על אותו יום (מי שמוגדר אחרון מנצח): חול/חנוכה < שבת < חג */
+  .cell.chol{ background:var(--gray-soft); border-color:#d6d2ca; }
+  .cell.shabbat{ background:var(--sky-soft); border-color:#bcd7e3; }
+  .cell.holiday{ background:var(--pomegranate-soft); border-color:#e3bcb6; }
+  .cell.roshchodesh{ background:var(--olive-soft); border-color:#c9d6ac; } /* לא בשימוש כרגע — נשמר לשחזור מהיר, ראו מקרא */
+
+  .cell .top-row{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .cell .heb-num{ font-size:15px; font-weight:700; color:var(--ink); }
+  .cell .greg-num{ font-size:9.5px; color:var(--gold); font-weight:600; direction:ltr; }
+
+  .cell .tags{
+    margin-top:1px; font-size:7.6px; line-height:1.02; color:var(--ink);
+    flex:1; display:flex; flex-direction:column; min-height:0;
+  }
+  .cell .tag-holiday{ color:var(--pomegranate); font-weight:600; }
+  .cell .tag-time{ color:var(--gold); }
+  .cell .tag-parsha{ color:var(--sky); font-weight:600; }
+  .cell .tag-omer{ color:var(--ink-soft); font-weight:400; }
+  .cell .tag-chol{ color:var(--gray); font-weight:600; }
+  .cell .tag-dst{ display:flex; align-items:flex-start; gap:3px; color:var(--olive); margin:0; }
+  .cell .tag-dst svg{ width:11px; height:11px; flex:none; margin-top:1px; }
+  .cell .tag-dst-title{ font-weight:600; }
+  .cell .tag-dst-sub{ opacity:.8; }
+  .cell .tag-dst-change{ display:inline-flex; align-items:center; gap:2px; }
+  .cell .tag-candle-block{ margin-top:auto; }
+  .cell .tag-candle-block + .tag-candle-block{ margin-top:1.5px; } /* אם יש גם הדלקה וגם הבדלה באותו יום */
+  .cell .tag-candle-title{ color:var(--gold); font-weight:600; }
+  .cell .tag-candle-grid{ display:grid; grid-template-columns:1fr; column-gap:3px; }
+  .cell .tag-candle-row{ color:var(--gold); white-space:nowrap; overflow:hidden; text-overflow:clip; }
+  .cell .tag-roshchodesh{ color:var(--olive); font-weight:600; }
+
+  @media print{
+    html,body{ background:#fff; }
+    .page{ margin:0; box-shadow:none; page-break-after:always; }
+    .page:last-child{ page-break-after:auto; }
+  }
+</style>
+</head>
+<body>
+
+<div id="pages"></div>
+
+<script type="module">
+import { HDate, HebrewCalendar, Location, flags, months, gematriya } from 'https://esm.sh/@hebcal/core@6.5.3';
+
+const JERUSALEM = new Location(31.7683, 35.2137, true, 'Asia/Jerusalem', 'ירושלים', 'IL', undefined, 754);
+
+// ── המשפחה: 4 בתים, כל אחד עם זמני הדלקת נרות/הבדלה משלו ──────────────
+const FAMILY_LOCATIONS = [
+  { city: 'שערי תקווה', loc: new Location(32.12565, 35.02464, true, 'Asia/Jerusalem', 'שערי תקווה', 'IL') },
+  { city: 'אפרת',        loc: new Location(31.66927, 35.16475, true, 'Asia/Jerusalem', 'אפרת', 'IL') },
+  { city: 'אלעד',        loc: new Location(32.05088, 34.94957, true, 'Asia/Jerusalem', 'אלעד', 'IL') },
+  { city: 'אביתר',       loc: new Location(32.11977, 35.27474, true, 'Asia/Jerusalem', 'אביתר', 'IL') },
+];
+const EXCLUDED = new Set([
+  'שְׁמִירָת בֵּית הַסֵפֶר לְיוֹם הַעֲלִיָּה', 'יוֹם הֶרְצְל',
+  'יוֹם זַ׳בּוֹטִינְסְקִי', 'יוֹם בֶּן־גּוּרִיּוֹן', 'יוֹם הַזִּכָּרוֹן לְיִצְחָק רַבִּין',
+  'יוֹם הַעֲלִיָּה', 'יוֹם הַמִּשׁפָּחָה', 'יוֹם הַשָׂפָה הַעִברִית', 'חַג הַסִּיגְד',
+  'רֹאשׁ הַשָּׁנָה לְמַעְשַׂר בְּהֵמָה', 'חַג הַבָּנוֹת',
+  'פֶּסַח ו׳ (חוה״מ)', // רק טריגר להדלקת נרות של שביעי של פסח, אין צורך בכיתוב
+  'עֶרֶב פֶּסַח', // אין צורך בכיתוב (תענית בכורות/זמני חמץ/הדלקת נרות כבר מספרים את הסיפור)
+]);
+const WEEKDAYS_HE = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+function fullYear(y){ return 'ה׳' + gematriya(y); }
+
+// ── Hebrew-month pages: current Elul through the Tishrei after next
+//    (the whole gift year: lead-up + all of 5787 + the next Rosh Hashana) ──
+const MONTHS = [
+  { m: months.ELUL,    y: 5786 },
+  { m: months.TISHREI, y: 5787 },
+  { m: months.CHESHVAN,y: 5787 },
+  { m: months.KISLEV,  y: 5787 },
+  { m: months.TEVET,   y: 5787 },
+  { m: months.SHVAT,   y: 5787 },
+  { m: months.ADAR_I,  y: 5787 },
+  { m: months.ADAR_II, y: 5787 },
+  { m: months.NISAN,   y: 5787 },
+  { m: months.IYYAR,   y: 5787 },
+  { m: months.SIVAN,   y: 5787 },
+  { m: months.TAMUZ,   y: 5787 },
+  { m: months.AV,      y: 5787 },
+  { m: months.ELUL,    y: 5787 },
+  { m: months.TISHREI, y: 5788 },
+];
+
+// Gregorian span covering all those Hebrew months, for holiday lookup
+const firstOfRange = new HDate(1, MONTHS[0].m, MONTHS[0].y).greg();
+const lastMonth = MONTHS[MONTHS.length - 1];
+const lastHd = new HDate(1, lastMonth.m, lastMonth.y);
+const lastOfRange = new HDate(lastHd.daysInMonth(), lastMonth.m, lastMonth.y).greg();
+const RANGE_START = firstOfRange;
+const RANGE_END = new Date(lastOfRange.getFullYear(), lastOfRange.getMonth(), lastOfRange.getDate() + 1);
+
+// ── Precompute holiday / candle / parsha / fast / zmanim events, keyed by local date ──
+function pad(n){ return String(n).padStart(2,'0'); }
+function dateKey(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function timeStr(t){ return new Intl.DateTimeFormat('he-IL', { timeZone: 'Asia/Jerusalem', hour: '2-digit', minute: '2-digit' }).format(t); }
+function localKeyFromTime(t){ return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jerusalem' }).format(t); }
+function ilUtcOffset(d){
+  const part = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jerusalem', timeZoneName: 'shortOffset' })
+    .formatToParts(d).find(p => p.type === 'timeZoneName')?.value ?? 'GMT+3';
+  return parseInt(part.replace('GMT', ''), 10);
+}
+
+// ימי מעבר שעון קיץ/חורף — מזוהים אוטומטית לפי שינוי בהיסט UTC בין יום ליום.
+// הבדיקה על צהריים UTC של כל תאריך (לא חצות) כדי לא ליפול בדיוק על שעת המעבר עצמה.
+function noonProbe(d){ return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 12)); }
+const DST_CHANGE = {}; // dateKey -> 'winter' | 'summer' — נשמר על היום שלפני המעבר, כדי שהתזכורת תופיע לפני שהולכים לישון
+{
+  const prevDay = new Date(RANGE_START); prevDay.setDate(prevDay.getDate() - 1);
+  let prevOffset = ilUtcOffset(noonProbe(prevDay));
+  for (let d = new Date(RANGE_START); d < RANGE_END; d.setDate(d.getDate() + 1)) {
+    const offset = ilUtcOffset(noonProbe(d));
+    if (offset !== prevOffset) {
+      const dayBefore = new Date(d); dayBefore.setDate(dayBefore.getDate() - 1);
+      DST_CHANGE[dateKey(dayBefore)] = offset > prevOffset ? 'summer' : 'winter';
+    }
+    prevOffset = offset;
+  }
+}
+
+const items = HebrewCalendar.calendar({
+  isHebrewYear: false,
+  start: RANGE_START,
+  end: RANGE_END,
+  il: true, location: JERUSALEM, sedrot: true, candlelighting: true,
+  mask: flags.CHAG | flags.MINOR_FAST | flags.MAJOR_FAST | flags.MODERN_HOLIDAY
+      | flags.ROSH_CHODESH | flags.PARSHA_HASHAVUA | flags.LIGHT_CANDLES
+      | flags.LIGHT_CANDLES_TZEIS | flags.YOM_TOV_ENDS
+      | flags.MINOR_HOLIDAY | flags.SPECIAL_SHABBAT | flags.OMER_COUNT,
+});
+
+const dayInfo = {}; // dateKey -> { holidays:[], parsha:null, omer:null, candles:[], havdalahs:[], roshChodesh:false }
+function ensure(key){ return dayInfo[key] ??= { holidays:[], parsha:null, omer:null, candles:[], havdalahs:[], roshChodesh:false }; }
+
+for (const item of items) {
+  const rawTitle = item.render('he');
+  if (EXCLUDED.has(rawTitle)) continue;
+  const title = rawTitle.startsWith('חֲנוּכָּה') ? 'חֲנוּכָּה'
+    : rawTitle.startsWith('רֹאשׁ הַשָּׁנָה ') && /\d/.test(rawTitle) // יום א׳, אין צורך במספר השנה; "שבת" רק אם אכן חל בשבת (תמיד באחד מ-4 ימים אפשריים)
+      ? (item.getDate().greg().getDay() === 6 ? 'שַׁבַּת רֹאשׁ הַשָּׁנָה' : 'רֹאשׁ הַשָּׁנָה')
+    : rawTitle === 'רֹאשׁ הַשָּׁנָה ב׳' ? 'רֹאשׁ הַשָּׁנָה' // יום ב׳ לעולם לא חל בשבת (כלל "לא אד"ו ראש"), אין צורך להבדיל
+    : rawTitle === 'פֶּסַח א׳' ? 'פֶּסַח' // יום ראשון בלבד, אין צורך במספר סידורי
+    : rawTitle === 'סֻכּוֹת א׳' ? 'סֻכּוֹת' // יום ראשון בלבד, אין צורך במספר סידורי
+    : rawTitle === 'סֻכּוֹת ז׳ (הוֹשַׁעְנָא רַבָּה)' ? 'חול המועד סֻכּוֹת - הוֹשַׁעְנָא רַבָּה' // אחיד עם "שמיני עצרת - שמחת תורה" הסמוך + "חול המועד"
+    : rawTitle === 'שְׁמִינִי עֲצֶרֶת' ? 'שְׁמִינִי עֲצֶרֶת - שִׂמְחַת תּוֹרָה' // בישראל אותו יום
+    : rawTitle === 'פֶּסַח ז׳' ? 'שְׁבִיעִי שֶׁל פֶּסַח' // השם המקובל
+    : rawTitle === 'סְלִיחוֹת' ? 'אשכנזים מתחילים סְלִיחוֹת' // התאריך הזה הוא המנהג האשכנזי בלבד; ספרדים מתחילים בר"ח אלול
+    : rawTitle;
+  const cats = item.getCategories ? item.getCategories() : [];
+  if (cats.includes('candles') || cats.includes('havdalah')) continue; // מגיע מ-FAMILY_LOCATIONS למטה, לפי בית
+  const key = item.eventTime ? localKeyFromTime(item.eventTime) : dateKey(item.getDate().greg());
+
+  if (cats.includes('parashat')) {
+    ensure(key).parsha = title;
+  } else if (cats.includes('omer')) {
+    ensure(key).omer = title; // מספר היום בעומר — מוצג בנפרד, לא צבוע כמו חג (חוץ מל"ג בעומר, שכבר מגיע כחג נפרד)
+  } else {
+    const info = ensure(key);
+    if (cats.includes('roshchodesh')) info.roshChodesh = true;
+    info.holidays.push(title);
+  }
+}
+
+// ספרדים מתחילים סליחות בליל ב' אלול (לא א' אלול עצמו — בראש חודש אין אומרים סליחות; שו"ע או"ח תקפ"א:א)
+for (const y of new Set(MONTHS.filter(m => m.m === months.ELUL).map(m => m.y))) {
+  const key = dateKey(new HDate(2, months.ELUL, y).greg());
+  ensure(key).holidays.push('ספרדים מתחילים סְלִיחוֹת');
+}
+
+// ימי חול המועד (סוכות/פסח) — שם החג נשלף כמו שהוא מ-hebcal, רק סדר המילים מתהפך ל"חול המועד X"
+const CHOL_HAMOED_DAYS = new Map(); // dateKey -> 'חול המועד סוכות' וכו׳
+for (const item of HebrewCalendar.calendar({ isHebrewYear: false, start: RANGE_START, end: RANGE_END, il: true, mask: flags.CHOL_HAMOED })) {
+  const chagName = item.render('he').match(/^(.+) [א-ת]׳ \(חוה״מ\)$/)?.[1] ?? item.render('he');
+  const label = `חול המועד ${chagName}`;
+  CHOL_HAMOED_DAYS.set(dateKey(item.getDate().greg()), label);
+}
+
+// זמני הדלקת נרות/הבדלה — פעם לכל אחד מ-4 הבתים, לפי הקואורדינטות שלו
+for (const { city, loc } of FAMILY_LOCATIONS) {
+  const famItems = HebrewCalendar.calendar({
+    isHebrewYear: false,
+    start: RANGE_START,
+    end: RANGE_END,
+    il: true, location: loc, candlelighting: true, candleLightingMins: 20,
+    mask: flags.LIGHT_CANDLES | flags.LIGHT_CANDLES_TZEIS | flags.YOM_TOV_ENDS,
+  });
+  for (const item of famItems) {
+    const cats = item.getCategories ? item.getCategories() : [];
+    const key = localKeyFromTime(item.eventTime);
+    if (cats.includes('candles')) ensure(key).candles.push({ city, time: timeStr(item.eventTime) });
+    else if (cats.includes('havdalah')) ensure(key).havdalahs.push({ city, time: timeStr(item.eventTime) });
+  }
+}
+
+// ── Build DOM ───────────────────────────────────────────────────────
+const root = document.getElementById('pages');
+
+function svgIcon(kind){
+  if (kind === 'pomegranate') {
+    return `<svg viewBox="0 0 64 64" fill="none"><path d="M32 8c3 3 4 6 4 9" stroke="#6b7a3f" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="32" cy="38" r="22" fill="#a1332b"/>
+      <path d="M22 20l4-6 4 4 4-4 4 6" stroke="#a1332b" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <g fill="#f3e2c4"><circle cx="24" cy="32" r="2.6"/><circle cx="32" cy="28" r="2.6"/><circle cx="40" cy="33" r="2.6"/>
+      <circle cx="26" cy="42" r="2.6"/><circle cx="35" cy="44" r="2.6"/><circle cx="41" cy="41" r="2.6"/></g></svg>`;
+  }
+  if (kind === 'honey') {
+    return `<svg viewBox="0 0 64 64" fill="none"><rect x="18" y="22" width="28" height="30" rx="4" fill="#b8863b"/>
+      <rect x="22" y="12" width="20" height="10" rx="2" fill="#6b5d55"/>
+      <rect x="18" y="34" width="28" height="4" fill="#f3e2c4" opacity=".7"/>
+      <rect x="18" y="42" width="28" height="4" fill="#f3e2c4" opacity=".7"/></svg>`;
+  }
+  if (kind === 'clock') {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>`;
+  }
+  return `<svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="36" r="20" fill="#c9432f"/>
+    <path d="M32 16c2-4 6-6 10-5-1 4-5 7-10 5z" fill="#6b7a3f"/></svg>`;
+}
+
+// cover page
+const cover = document.createElement('div');
+cover.className = 'page cover';
+cover.innerHTML = `
+  <div class="greeting">שנה טובה ומתוקה</div>
+  <div class="year-big">${fullYear(5787)}</div>
+  <div class="sub">לוח שנה עברי — מתנה לראש השנה</div>
+  <div class="icons">${svgIcon('pomegranate')}${svgIcon('honey')}${svgIcon('apple')}</div>
+  <div class="caption">אלול ${fullYear(5786)} – תשרי ${fullYear(5788)}</div>
+  <div class="legend">
+    <div class="legend-item"><span class="legend-swatch roshchodesh"></span>ראש חודש</div>
+    <div class="legend-item"><span class="legend-swatch shabbat"></span>שבת</div>
+    <div class="legend-item"><span class="legend-swatch holiday"></span>חג / מועד</div>
+    <div class="legend-item"><span class="legend-swatch chol"></span>חול המועד / חנוכה</div>
+    <div class="legend-item"><span class="legend-text-sample candle">18:32</span>זמני היום</div>
+  </div>
+`;
+root.appendChild(cover);
+
+for (const { m: monthNum, y: year } of MONTHS) {
+  const hd1 = new HDate(1, monthNum, year);
+  const daysInMonth = hd1.daysInMonth();
+  const first = hd1.greg();
+  const last = new HDate(daysInMonth, monthNum, year).greg();
+  const leadBlanks = first.getDay();
+
+  const hebParts = hd1.renderGematriya().split(' ');
+  const hebMonthName = hebParts.slice(1, -1).join(' ');
+  const fmt = (d) => d.toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' });
+  const gregHead = first.getMonth() === last.getMonth()
+    ? `${first.getDate()} – ${fmt(last)}`
+    : `${first.toLocaleDateString('he-IL', { day: 'numeric', month: 'long' })} – ${fmt(last)}`;
+
+  const page = document.createElement('div');
+  page.className = 'page';
+  page.innerHTML = `
+    <div class="month-head">
+      <div class="heb">${hebMonthName} ${fullYear(year)}</div>
+      <div class="greg">${gregHead}</div>
+    </div>
+    <div class="grid"></div>
+  `;
+  const grid = page.querySelector('.grid');
+  WEEKDAYS_HE.forEach((wd, i) => {
+    const el = document.createElement('div');
+    el.className = 'wd' + (i === 6 ? ' sat' : '');
+    el.textContent = wd;
+    grid.appendChild(el);
+  });
+  for (let i = 0; i < leadBlanks; i++) {
+    const el = document.createElement('div');
+    el.className = 'cell blank';
+    grid.appendChild(el);
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const hd = new HDate(d, monthNum, year);
+    const greg = hd.greg();
+    const key = dateKey(greg);
+    const info = dayInfo[key] ?? { holidays: [], parsha: null, omer: null, candles: [], havdalahs: [], roshChodesh: false };
+    const weekday = greg.getDay();
+
+    const cls = ['cell'];
+    if (weekday === 6) cls.push('shabbat');
+    // צומות קלים, חנוכה, ראש חודש, "ערב X", שבתות מיוחדות (רשימה סגורה — לא "שבת ראש השנה"!), הושענא רבה
+    // — לא צובעים ורוד, לא ימים שאסורים במלאכה
+    const NOT_MELACHA_ASUR = new Set([
+      'צוֹם גְּדַלְיָה', 'עֲשָׂרָה בְּטֵבֵת', 'תַּעֲנִית אֶסְתֵּר', 'תַּעֲנִית בְּכוֹרוֹת', 'צוֹם י״ז בְּתַמּוּז',
+      'חֲנוּכָּה', 'אשכנזים מתחילים סְלִיחוֹת', 'ספרדים מתחילים סְלִיחוֹת', 'חול המועד סֻכּוֹת - הוֹשַׁעְנָא רַבָּה',
+      'שַׁבַּת שׁוּבָה', 'שַׁבַּת שִׁירָה', 'שַׁבַּת שְׁקָלִים', 'שַׁבַּת זָכוֹר', 'שַׁבַּת פָּרָה',
+      'שַׁבַּת הַחֹדֶשׁ', 'שַׁבַּת הַגָּדוֹל', 'שַׁבַּת חֲזוֹן', 'שַׁבַּת נַחֲמוּ', 'ט״וּ בִּשְׁבָט',
+      'פּוּרִים קָטָן', 'שׁוּשָׁן פּוּרִים קָטָן', 'פּוּרִים', 'שׁוּשָׁן פּוּרִים',
+      'יוֹם הַשּׁוֹאָה', 'יוֹם הַזִּכָּרוֹן', 'פֶּסַח שֵׁנִי',
+      'יוֹם הָעַצְמָאוּת', 'ל״ג בָּעוֹמֶר', 'יוֹם יְרוּשָׁלַיִם', 'תִּשְׁעָה בְּאָב', 'ט״וּ בְּאָב',
+    ]);
+    // ימים שצבועים אפור כמו חול המועד, גם כשאין להם דגל CHOL_HAMOED משלהם
+    const GRAY_LIKE_CHOL = new Set([
+      'פּוּרִים', 'שׁוּשָׁן פּוּרִים',
+      'יוֹם הָעַצְמָאוּת', 'ל״ג בָּעוֹמֶר', 'יוֹם יְרוּשָׁלַיִם', 'תִּשְׁעָה בְּאָב', 'ט״וּ בְּאָב',
+      'צוֹם גְּדַלְיָה', 'עֲשָׂרָה בְּטֵבֵת', 'תַּעֲנִית אֶסְתֵּר', 'יוֹם הַשּׁוֹאָה', 'יוֹם הַזִּכָּרוֹן', 'צוֹם י״ז בְּתַמּוּז',
+    ]);
+    if (info.holidays && info.holidays.some(h => !NOT_MELACHA_ASUR.has(h) && !h.startsWith('רֹאשׁ חוֹדֶשׁ') && !h.startsWith('עֶרֶב') && !h.includes(':'))) cls.push('holiday');
+    if (CHOL_HAMOED_DAYS.has(key) || (info.holidays && info.holidays.some(h => h === 'חֲנוּכָּה' || GRAY_LIKE_CHOL.has(h)))) cls.push('chol');
+
+    const tags = [];
+    // "חול המועד X" רק כשאין כבר שם ספציפי יותר לאותו יום (כמו הושענא רבה)
+    const hasNamedHoliday = info.holidays && info.holidays.some(h => !h.includes(':'));
+    if (CHOL_HAMOED_DAYS.has(key) && !hasNamedHoliday) tags.push(`<div class="tag-chol">${CHOL_HAMOED_DAYS.get(key)}</div>`);
+    if (info.holidays) {
+      // names first, then embedded-time zmanim lines (e.g. "תחילת הצום: 04:29"), כל אחד בשורה נפרדת
+      const sorted = [...info.holidays].sort((a, b) => {
+        const at = a.includes(':'), bt = b.includes(':');
+        if (at !== bt) return at - bt; // שמות קודם, שורות זמן (עם ':') בסוף
+        const ae = a.startsWith('עֶרֶב') ? 0 : 1, be = b.startsWith('עֶרֶב') ? 0 : 1;
+        return ae - be; // "ערב X" קודם לתוספות אחרות של אותו יום (למשל תענית בכורות)
+      });
+      // הערות "X מתחילים סליחות" זזות לסוף התא (אחרי הבדלה) — הערה משנית, לא הכי חשובה בתא
+      const SELICHOT_NOTES = new Set(['אשכנזים מתחילים סְלִיחוֹת', 'ספרדים מתחילים סְלִיחוֹת']);
+      const nameLines = sorted.filter(h => !h.includes(':') && !SELICHOT_NOTES.has(h));
+      const timeLines = sorted.filter(h => h.includes(':'));
+      nameLines.forEach(h => {
+        if (h === 'חול המועד סֻכּוֹת - הוֹשַׁעְנָא רַבָּה') {
+          tags.push(`<div class="tag-holiday"><span class="tag-chol">חול המועד סֻכּוֹת -</span> הוֹשַׁעְנָא רַבָּה</div>`);
+        } else {
+          tags.push(`<div class="tag-holiday">${h}</div>`);
+        }
+      });
+      timeLines.forEach(h => tags.push(`<div class="tag-time">${h}</div>`));
+    }
+    if (info.parsha) tags.push(`<div class="tag-parsha">${info.parsha}</div>`);
+    // ספירת העומר: לא צובעים כמו חג — חוץ מל"ג בעומר, שכבר מגיע כחג נפרד (למנוע כפילות)
+    if (info.omer && !info.holidays.includes(info.omer)) tags.push(`<div class="tag-omer">${info.omer}</div>`);
+    // יום כיפור: אותו רגע הוא גם הדלקת נרות/הבדלה וגם תחילת/סיום הצום — שני הניסוחים ביחד
+    const isErevYK = info.holidays.some(h => h.startsWith('עֶרֶב יוֹם כִּפּוּר'));
+    const isYK = info.holidays.some(h => h === 'יוֹם כִּפּוּר');
+
+    if (info.candles.length) {
+      const title = isErevYK ? 'הדלקת נרות / תחילת הצום:' : 'הדלקת נרות:';
+      tags.push(`<div class="tag-candle-block"><div class="tag-candle-title">${title}</div><div class="tag-candle-grid">${
+        info.candles.map(c => `<div class="tag-candle-row">${c.city} ${c.time}</div>`).join('')
+      }</div></div>`);
+    }
+    if (info.havdalahs.length) {
+      const title = isYK ? 'הבדלה / סיום הצום:' : 'הבדלה:';
+      tags.push(`<div class="tag-candle-block"><div class="tag-candle-title">${title}</div><div class="tag-candle-grid">${
+        info.havdalahs.map(c => `<div class="tag-candle-row">${c.city} ${c.time}</div>`).join('')
+      }</div></div>`);
+    }
+    if (info.holidays) {
+      ['אשכנזים מתחילים סְלִיחוֹת', 'ספרדים מתחילים סְלִיחוֹת'].forEach(note => {
+        if (info.holidays.includes(note)) tags.push(`<div class="tag-holiday">${note}</div>`);
+      });
+    }
+
+    const dst = DST_CHANGE[key]; // 'winter' | 'summer' | undefined — קבוע לישראל, המעבר תמיד בשעה 02:00
+    if (dst) {
+      const label = dst === 'winter' ? 'שעון חורף' : 'שעון קיץ';
+      const arrow = '<svg viewBox="0 0 16 10" width="9" height="7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5H3M7 1L3 5l4 4"/></svg>';
+      const change = dst === 'winter' ? `<span>02:00</span>${arrow}<span>01:00</span>` : `<span>02:00</span>${arrow}<span>03:00</span>`;
+      const wd = WEEKDAYS_HE[weekday]; // היום המוצג — היום שלפני המעבר
+      const nextWd = WEEKDAYS_HE[(weekday + 1) % 7]; // יום המעבר עצמו
+      tags.push(`<div class="tag-dst">${svgIcon('clock')}<span><span class="tag-dst-title">${label}:</span> <span class="tag-dst-change">${change}</span><div class="tag-dst-sub">(בלילה שבין ${wd} ל${nextWd})</div></span></div>`);
+    }
+
+    const el = document.createElement('div');
+    el.className = cls.join(' ');
+    el.innerHTML = `
+      <div class="top-row">
+        <span class="heb-num">${gematriya(d)}</span>
+        <span class="greg-num">${greg.getDate()}.${greg.getMonth() + 1}</span>
+      </div>
+      <div class="tags">${tags.join('')}</div>
+    `;
+    grid.appendChild(el);
+  }
+  const totalCells = leadBlanks + daysInMonth;
+  const trailBlanks = (7 - (totalCells % 7)) % 7;
+  for (let i = 0; i < trailBlanks; i++) {
+    const el = document.createElement('div');
+    el.className = 'cell blank';
+    grid.appendChild(el);
+  }
+
+  root.appendChild(page);
+}
+
+</script>
+</body>
+</html>
