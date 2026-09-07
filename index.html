@@ -106,13 +106,13 @@
   .cell .tag-parsha{ color:var(--sky); font-weight:600; }
   .cell .tag-omer{ color:var(--ink-soft); font-weight:400; }
   .cell .tag-chol{ color:var(--gray); font-weight:600; }
-  .cell .tag-dst{ display:flex; align-items:flex-start; gap:3px; color:var(--olive); margin:0; }
-  .cell .tag-dst svg{ width:11px; height:11px; flex:none; margin-top:1px; }
+  .cell .tag-dst{ display:flex; align-items:center; gap:3px; color:var(--olive); margin:1px 0; }
+  .cell .tag-dst-icon{ width:18px; height:18px; flex:none; }
   .cell .tag-dst-title{ font-weight:600; }
   .cell .tag-dst-sub{ opacity:.8; }
   .cell .tag-dst-change{ display:inline-flex; align-items:center; gap:2px; }
-  .cell .tag-family{ display:flex; align-items:flex-start; gap:3px; color:var(--plum); margin:0; }
-  .cell .tag-family svg{ width:10px; height:10px; flex:none; margin-top:1px; }
+  .cell .tag-family{ display:flex; align-items:center; gap:3px; color:var(--plum); margin:1px 0; }
+  .cell .tag-family-icon{ width:18px; height:18px; flex:none; }
   .cell .fast-table{ display:grid; gap:0 4px; color:var(--gold); }
   .cell .fast-table .fast-val{ text-align:center; }
   .cell .fast-head{ color:var(--ink-soft); font-weight:600; opacity:.8; }
@@ -207,10 +207,10 @@ const FAMILY_DATES = [
   { name: 'איתמר נוסרתי',           type: 'birthday', day: 9,  m: months.NISAN,    year: 5763 },
   { name: 'אמיתי נוסרתי',           type: 'birthday', day: 22, m: months.NISAN,    year: 5771 },
   // ימי נישואין
-  { name: 'גדליה ובת ציון שליסל',   type: 'anniversary', day: 25, m: months.ELUL,  year: 5734 },
-  { name: 'אורלי וקובי שליסל',      type: 'anniversary', day: 26, m: months.SHVAT, year: 5759 },
-  { name: 'איילת ויצחק שליסל',      type: 'anniversary', day: 7,  m: months.NISAN, year: 5767 },
-  { name: 'גולדי ויניב נוסרתי',     type: 'anniversary', day: 5,  m: months.TAMUZ, year: 5761 },
+  { name: 'בת ציון וגדליה',         type: 'anniversary', day: 25, m: months.ELUL,  year: 5734 },
+  { name: 'אורלי וקובי',            type: 'anniversary', day: 26, m: months.SHVAT, year: 5759 },
+  { name: 'איילת ויצחק',            type: 'anniversary', day: 7,  m: months.NISAN, year: 5767 },
+  { name: 'גולדי ויניב',            type: 'anniversary', day: 5,  m: months.TAMUZ, year: 5761 },
   // יארצייטים
   { name: 'אסתר שליסל ז"ל',         relation: 'סבתא', type: 'yahrzeit', day: 6,  m: months.SHVAT, year: 5760 },
   { name: 'לאונרד שליסל ז"ל',       type: 'yahrzeit', day: 17, m: months.SHVAT, year: 5718 },
@@ -544,8 +544,8 @@ for (const { m: monthNum, y: year } of MONTHS) {
     //    החג ואז הפרשה), אחר כך מה שאישי/מחושב באותו יום, ולבסוף פרטים/הערות. ──
     const sec = {}; // section-name -> HTML string (או '' אם לא רלוונטי היום)
     const RENDER_ORDER = [
-      'cholGeneric', 'holidayNames', 'timeLines', 'parsha', 'familyEvents',
-      'fastTable', 'omer', 'candles', 'havdalah', 'selichotNotes', 'dst',
+      'cholGeneric', 'holidayNames', 'timeLines', 'parsha',
+      'fastTable', 'omer', 'familyEvents', 'candles', 'havdalah', 'selichotNotes', 'dst',
     ];
 
     // "חול המועד X" רק כשאין כבר שם ספציפי יותר לאותו יום (כמו הושענא רבה)
@@ -562,7 +562,7 @@ for (const { m: monthNum, y: year } of MONTHS) {
       });
       // הערות "X מתחילים סליחות" זזות לסוף התא (אחרי הבדלה) — הערה משנית, לא הכי חשובה בתא
       const SELICHOT_NOTES = new Set(['אשכנזים מתחילים סְלִיחוֹת', 'ספרדים מתחילים סְלִיחוֹת']);
-      const nameLines = sorted.filter(h => !h.includes(':') && !SELICHOT_NOTES.has(h));
+      const nameLines = sorted.filter(h => !h.includes(':') && !SELICHOT_NOTES.has(h) && h !== 'תַּעֲנִית בְּכוֹרוֹת');
       const timeLines = sorted.filter(h => h.includes(':'));
       sec.holidayNames = nameLines.map(h => h === 'חול המועד סֻכּוֹת - הוֹשַׁעְנָא רַבָּה'
         ? `<div class="tag-holiday"><span class="tag-chol">חול המועד סֻכּוֹת -</span> הוֹשַׁעְנָא רַבָּה</div>`
@@ -575,9 +575,10 @@ for (const { m: monthNum, y: year } of MONTHS) {
 
     sec.parsha = info.parsha ? `<div class="tag-parsha">${info.parsha}</div>` : '';
 
-    const familyIcon = { birthday: 'cake', anniversary: 'rings', yahrzeit: 'candle' };
+    const familyIconCode = { birthday: '1f382', anniversary: '1f48d', yahrzeit: '1f56f' };
+    const twemojiImg = (code, cls) => `<img class="${cls}" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/${code}.svg" alt="">`;
     sec.familyEvents = (FAMILY_EVENTS.get(key) ?? [])
-      .map(fe => `<div class="tag-family">${svgIcon(familyIcon[fe.type])}<span>${fe.text}</span></div>`).join('');
+      .map(fe => `<div class="tag-family">${twemojiImg(familyIconCode[fe.type], 'tag-family-icon')}<span>${fe.text}</span></div>`).join('');
 
     const ft = FAST_TIMES.get(key);
     const ftKinds = ft ? ['fast_start', 'fast_end', 'achilasChametz', 'biurChametz'].filter(k => ft[k]?.length) : [];
@@ -586,9 +587,12 @@ for (const { m: monthNum, y: year } of MONTHS) {
     const mergeCandles = ftKinds.length > 0 && info.candles.length > 0;
     if (ftKinds.length) {
       const allKinds = mergeCandles ? [...ftKinds, 'candles'] : ftKinds;
-      const headers = allKinds.map(k => `<span class="fast-head fast-val">${FAST_KIND_LABEL[k]}</span>`).join('');
       // בתענית בכורות (4 עמודות זמן) עמודת הישוב צרה מדי ל"שערי תקווה" בשורה אחת — מקצרים רק כאן
       const isBechorot = info.holidays.includes('תַּעֲנִית בְּכוֹרוֹת');
+      const headers = allKinds.map(k => {
+        const label = (isBechorot && k === 'fast_start') ? 'כניסת צום תענית בכורות' : FAST_KIND_LABEL[k];
+        return `<span class="fast-head fast-val">${label}</span>`;
+      }).join('');
       const rows = FAMILY_LOCATIONS.map(({ city }, i) => {
         const cityLabel = (isBechorot && city === 'שערי תקווה') ? 'ש.תקווה' : city;
         const vals = allKinds.map(k => `<span class="fast-val">${k === 'candles' ? info.candles[i].time : ft[k][i].time}</span>`).join('');
@@ -620,7 +624,7 @@ for (const { m: monthNum, y: year } of MONTHS) {
       const change = dst === 'winter' ? `<span>02:00</span>${arrow}<span>01:00</span>` : `<span>02:00</span>${arrow}<span>03:00</span>`;
       const wd = WEEKDAYS_HE[weekday]; // היום המוצג — היום שלפני המעבר
       const nextWd = WEEKDAYS_HE[(weekday + 1) % 7]; // יום המעבר עצמו
-      sec.dst = `<div class="tag-dst">${svgIcon('clock')}<span><span class="tag-dst-title">${label}:</span> <span class="tag-dst-change">${change}</span><div class="tag-dst-sub">(בלילה שבין ${wd} ל${nextWd})</div></span></div>`;
+      sec.dst = `<div class="tag-dst">${twemojiImg('23f0', 'tag-dst-icon')}<span><span class="tag-dst-title">${label}:</span> <span class="tag-dst-change">${change}</span><div class="tag-dst-sub">(בלילה שבין ${wd} ל${nextWd})</div></span></div>`;
     } else {
       sec.dst = '';
     }
