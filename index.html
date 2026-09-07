@@ -576,10 +576,18 @@ for (const { m: monthNum, y: year } of MONTHS) {
 
     sec.parsha = info.parsha ? `<div class="tag-parsha">${info.parsha}</div>` : '';
 
-    const familyIconCode = { birthday: '1f382', anniversary: '1f48d', yahrzeit: '1f56f' };
-    const twemojiImg = (code, cls) => `<img class="${cls}" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/${code}.svg" alt="">`;
+    const EMOJI_BASE = {
+      twemoji: code => `https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/${code}.svg`,
+      noto: code => `https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@main/svg/emoji_u${code}.svg`,
+    };
+    const emojiImg = (source, code, cls) => `<img class="${cls}" src="${EMOJI_BASE[source](code)}" alt="">`;
+    const familyIcon = {
+      birthday: { source: 'twemoji', code: '1f382' },
+      anniversary: { source: 'noto', code: '1f48d' },
+      yahrzeit: { source: 'twemoji', code: '1f56f' },
+    };
     sec.familyEvents = (FAMILY_EVENTS.get(key) ?? [])
-      .map(fe => `<div class="tag-family">${twemojiImg(familyIconCode[fe.type], 'tag-family-icon')}<span>${fe.text}</span></div>`).join('');
+      .map(fe => `<div class="tag-family">${emojiImg(familyIcon[fe.type].source, familyIcon[fe.type].code, 'tag-family-icon')}<span>${fe.text}</span></div>`).join('');
 
     const ft = FAST_TIMES.get(key);
     const ftKinds = ft ? ['fast_start', 'fast_end', 'achilasChametz', 'biurChametz'].filter(k => ft[k]?.length) : [];
@@ -625,7 +633,7 @@ for (const { m: monthNum, y: year } of MONTHS) {
       const change = dst === 'winter' ? `<span>02:00</span>${arrow}<span>01:00</span>` : `<span>02:00</span>${arrow}<span>03:00</span>`;
       const wd = WEEKDAYS_HE[weekday]; // היום המוצג — היום שלפני המעבר
       const nextWd = WEEKDAYS_HE[(weekday + 1) % 7]; // יום המעבר עצמו
-      sec.dst = `<div class="tag-dst">${twemojiImg('23f0', 'tag-dst-icon')}<span><span class="tag-dst-title">${label}:</span> <span class="tag-dst-change">${change}</span><div class="tag-dst-sub">(בלילה שבין ${wd} ל${nextWd})</div></span></div>`;
+      sec.dst = `<div class="tag-dst">${emojiImg('noto', '23f0', 'tag-dst-icon')}<span><span class="tag-dst-title">${label}:</span> <span class="tag-dst-change">${change}</span><div class="tag-dst-sub">(בלילה שבין ${wd} ל${nextWd})</div></span></div>`;
     } else {
       sec.dst = '';
     }
