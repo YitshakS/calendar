@@ -57,8 +57,6 @@
   .legend-swatch.holiday{ background:var(--pomegranate-soft); border-color:#e3bcb6; }
   .legend-swatch.roshchodesh{ background:var(--olive-soft); border-color:#c9d6ac; }
   .legend-swatch.chol{ background:var(--gray-soft); border-color:#d6d2ca; }
-  .legend-item .legend-text-sample{ font-weight:600; }
-  .legend-item .legend-text-sample.candle{ color:var(--gold); }
 
   /* ── month page ───────────────────────────────────────────────── */
   .month-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:2mm; }
@@ -472,8 +470,7 @@ cover.innerHTML = `
     <div class="legend-item"><span class="legend-swatch roshchodesh"></span>ראש חודש</div>
     <div class="legend-item"><span class="legend-swatch shabbat"></span>שבת</div>
     <div class="legend-item"><span class="legend-swatch holiday"></span>חג / מועד</div>
-    <div class="legend-item"><span class="legend-swatch chol"></span>חול המועד / חנוכה</div>
-    <div class="legend-item"><span class="legend-text-sample candle">18:32</span>זמני היום</div>
+    <div class="legend-item"><span class="legend-swatch chol"></span>חול המועד / אירוע ביום חול</div>
   </div>
 `;
 root.appendChild(cover);
