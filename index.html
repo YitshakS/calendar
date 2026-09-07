@@ -116,7 +116,7 @@
   .cell .tag-family-icon{ width:18px; height:18px; flex:none; }
   .cell .fast-table{ display:grid; gap:0 4px; color:var(--gold); }
   .cell .fast-table .fast-val{ text-align:center; }
-  .cell .fast-head{ color:var(--ink-soft); font-weight:600; opacity:.8; }
+  .cell .fast-head{ color:var(--gold); font-weight:600; }
   .cell .tag-candle-block{ margin-top:auto; } /* מוצמד לתחתית התא — לא חלק מהמרווח האחיד */
   .cell .tag-candle-block + .tag-candle-block{ margin-top:1px; } /* אם יש גם הדלקה וגם הבדלה באותו יום — חוזר למרווח האחיד במקום הצמדה */
   .cell .tag-candle-title{ color:var(--gold); font-weight:600; }
@@ -369,11 +369,11 @@ for (const { city, loc } of FAMILY_LOCATIONS) {
 //    במקום ירושלים בלבד — מזוהים לפי קטגוריית hebcal, לא לפי שם החג,
 //    כך שזה חל אוטומטית על כל צום קיים בלי תלות בשמו. ────────────────
 const FAST_KIND_LABEL = {
-  fast_start: 'כניסת הצום',
-  fast_end: 'צאת הצום',
-  achilasChametz: 'סוף זמן אכילת חמץ',
-  biurChametz: 'סוף זמן ביעור חמץ',
-  candles: 'הדלקת נרות',
+  fast_start: 'כניסת הצום:',
+  fast_end: 'צאת הצום:',
+  achilasChametz: 'סוף זמן אכילת חמץ:',
+  biurChametz: 'סוף זמן ביעור חמץ:',
+  candles: 'הדלקת נרות:',
 };
 const FAST_TIMES = new Map(); // dateKey -> { [kind]: [{city,time}] }
 const perFamilyFastKeys = new Set();
@@ -599,7 +599,7 @@ for (const { m: monthNum, y: year } of MONTHS) {
       // בתענית בכורות (4 עמודות זמן) עמודת הישוב צרה מדי ל"שערי תקווה" בשורה אחת — מקצרים רק כאן
       const isBechorot = info.holidays.includes('תַּעֲנִית בְּכוֹרוֹת');
       const headers = allKinds.map(k => {
-        const label = (isBechorot && k === 'fast_start') ? 'כניסת צום תענית בכורות' : FAST_KIND_LABEL[k];
+        const label = (isBechorot && k === 'fast_start') ? 'כניסת צום תענית בכורות:' : FAST_KIND_LABEL[k];
         return `<span class="fast-head fast-val">${label}</span>`;
       }).join('');
       const rows = FAMILY_LOCATIONS.map(({ city }, i) => {
@@ -618,13 +618,13 @@ for (const { m: monthNum, y: year } of MONTHS) {
     // ספירת העומר: לא צובעים כמו חג — חוץ מל"ג בעומר, שכבר מגיע כחג נפרד (למנוע כפילות)
     sec.omer = (info.omer && !info.holidays.includes(info.omer)) ? `<div class="tag-omer">${info.omer}</div>` : '';
 
-    // יום כיפור: אותו רגע הוא גם הדלקת נרות/הבדלה וגם תחילת/סיום הצום — שני הניסוחים ביחד
+    // יום כיפור: אותו רגע הוא גם הדלקת נרות/הבדלה וגם תחילת/צאת הצום — שני הניסוחים ביחד
     const isErevYK = info.holidays.some(h => h.startsWith('עֶרֶב יוֹם כִּפּוּר'));
     const isYK = info.holidays.some(h => h === 'יוֹם כִּפּוּר');
     sec.candles = (info.candles.length && !mergeCandles)
       ? familyTimeBlock(isErevYK ? 'הדלקת נרות / תחילת הצום:' : 'הדלקת נרות:', info.candles) : '';
     sec.havdalah = info.havdalahs.length
-      ? familyTimeBlock(isYK ? 'הבדלה / סיום הצום:' : 'הבדלה:', info.havdalahs) : '';
+      ? familyTimeBlock(isYK ? 'הבדלה / צאת הצום:' : 'הבדלה:', info.havdalahs) : '';
 
     const dst = DST_CHANGE[key]; // 'winter' | 'summer' | undefined — קבוע לישראל, המעבר תמיד בשעה 02:00
     if (dst) {
