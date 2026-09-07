@@ -115,6 +115,9 @@
   .cell .tag-dst-change{ display:inline-flex; align-items:center; gap:2px; }
   .cell .tag-family{ display:flex; align-items:flex-start; gap:3px; color:var(--plum); margin:0; }
   .cell .tag-family svg{ width:10px; height:10px; flex:none; margin-top:1px; }
+  .cell .fast-table{ display:grid; gap:0 4px; color:var(--gold); line-height:0.92; }
+  .cell .fast-table .fast-val{ text-align:center; }
+  .cell .fast-head{ color:var(--ink-soft); font-weight:600; opacity:.8; }
   .cell .tag-candle-block{ margin-top:auto; }
   .cell .tag-candle-block + .tag-candle-block{ margin-top:1.5px; } /* אם יש גם הדלקה וגם הבדלה באותו יום */
   .cell .tag-candle-title{ color:var(--gold); font-weight:600; }
@@ -364,6 +367,46 @@ for (const { city, loc } of FAMILY_LOCATIONS) {
   }
 }
 
+// ── זמני כל הצומות (כניסה/יציאה + זמני חמץ) מחושבים לכל בית בנפרד,
+//    במקום ירושלים בלבד — מזוהים לפי קטגוריית hebcal, לא לפי שם החג,
+//    כך שזה חל אוטומטית על כל צום קיים בלי תלות בשמו. ────────────────
+const FAST_KIND_LABEL = {
+  fast_start: 'כניסת הצום',
+  fast_end: 'צאת הצום',
+  achilasChametz: 'סוף זמן אכילת חמץ',
+  biurChametz: 'ביעור חמץ',
+  candles: 'הדלקת נרות',
+};
+const FAST_TIMES = new Map(); // dateKey -> { [kind]: [{city,time}] }
+const perFamilyFastKeys = new Set();
+for (const { city, loc } of FAMILY_LOCATIONS) {
+  const famFastItems = HebrewCalendar.calendar({
+    isHebrewYear: false,
+    start: RANGE_START,
+    end: RANGE_END,
+    il: true, location: loc, candlelighting: true,
+    mask: flags.MINOR_FAST | flags.MAJOR_FAST,
+  });
+  for (const item of famFastItems) {
+    const cats = item.getCategories ? item.getCategories() : [];
+    if (!cats.includes('zmanim') || !item.eventTime) continue;
+    const kind = cats.includes('achilasChametz') ? 'achilasChametz'
+      : cats.includes('biurChametz') ? 'biurChametz'
+      : item.render('he').startsWith('תְּחִילַּת') ? 'fast_start' : 'fast_end';
+    const key = dateKey(item.eventTime);
+    if (!FAST_TIMES.has(key)) FAST_TIMES.set(key, {});
+    const rec = FAST_TIMES.get(key);
+    (rec[kind] ??= []).push({ city, time: timeStr(item.eventTime) });
+    perFamilyFastKeys.add(key);
+  }
+}
+// מסירים את שורות הזמן של ירושלים-בלבד לכל תאריך שהוחלף לחישוב לפי בית
+for (const key of perFamilyFastKeys) {
+  dayInfo[key].holidays = dayInfo[key].holidays.filter(h =>
+    !h.startsWith('תְּחִילַּת הַצוֹם') && !h.startsWith('סִיּוּם הַצוֹם')
+    && !h.startsWith('סוֹף זְמַן אֲכִילַת חָמֵץ') && !h.startsWith('בִּעוּר חָמֵץ'));
+}
+
 // ── Build DOM ───────────────────────────────────────────────────────
 const root = document.getElementById('pages');
 
@@ -516,6 +559,23 @@ for (const { m: monthNum, y: year } of MONTHS) {
       });
       timeLines.forEach(h => tags.push(`<div class="tag-time">${h}</div>`));
     }
+    const ft = FAST_TIMES.get(key);
+    const ftKinds = ft ? ['fast_start', 'fast_end', 'achilasChametz', 'biurChametz'].filter(k => ft[k]?.length) : [];
+    // אם גם הדלקת נרות חלה באותו יום (למשל ערב פסח + תענית בכורות), משלבים אותה
+    // כעמודה נוספת באותה טבלה — כדי שכל ישוב יופיע פעם אחת בלבד בתא, לא פעמיים
+    const mergeCandles = ftKinds.length > 0 && info.candles.length > 0;
+    if (ftKinds.length) {
+      const allKinds = mergeCandles ? [...ftKinds, 'candles'] : ftKinds;
+      const headers = allKinds.map(k => `<span class="fast-head fast-val">${FAST_KIND_LABEL[k]}</span>`).join('');
+      const rows = FAMILY_LOCATIONS.map(({ city }, i) => {
+        const vals = allKinds.map(k => `<span class="fast-val">${k === 'candles' ? info.candles[i].time : ft[k][i].time}</span>`).join('');
+        return `<span>${city}</span>${vals}`;
+      }).join('');
+      tags.push(`<div class="tag-candle-block fast-table" style="grid-template-columns:1fr repeat(${allKinds.length},auto)">
+        <span></span>${headers}
+        ${rows}
+      </div>`);
+    }
     if (info.parsha) tags.push(`<div class="tag-parsha">${info.parsha}</div>`);
     // ספירת העומר: לא צובעים כמו חג — חוץ מל"ג בעומר, שכבר מגיע כחג נפרד (למנוע כפילות)
     if (info.omer && !info.holidays.includes(info.omer)) tags.push(`<div class="tag-omer">${info.omer}</div>`);
@@ -523,7 +583,7 @@ for (const { m: monthNum, y: year } of MONTHS) {
     const isErevYK = info.holidays.some(h => h.startsWith('עֶרֶב יוֹם כִּפּוּר'));
     const isYK = info.holidays.some(h => h === 'יוֹם כִּפּוּר');
 
-    if (info.candles.length) {
+    if (info.candles.length && !mergeCandles) {
       const title = isErevYK ? 'הדלקת נרות / תחילת הצום:' : 'הדלקת נרות:';
       tags.push(`<div class="tag-candle-block"><div class="tag-candle-title">${title}</div><div class="tag-candle-grid">${
         info.candles.map(c => `<div class="tag-candle-row">${c.city} ${c.time}</div>`).join('')
