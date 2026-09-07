@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>לוח שנה תשפ״ז — מתנה לראש השנה</title>
+<title>לוח שנה עברי — מתנה לראש השנה</title>
 <style>
   :root{
     --ink:#2b2320;
@@ -18,6 +18,7 @@
     --gray-soft:#eae7e1;
     --sky:#3a6f8f;
     --sky-soft:#dcebf1;
+    --plum:#7d4f6d;
     --paper:#fffdf8;
     --line:#e4d9c8;
     --line-strong:#cbb98f;
@@ -112,6 +113,8 @@
   .cell .tag-dst-title{ font-weight:600; }
   .cell .tag-dst-sub{ opacity:.8; }
   .cell .tag-dst-change{ display:inline-flex; align-items:center; gap:2px; }
+  .cell .tag-family{ display:flex; align-items:flex-start; gap:3px; color:var(--plum); margin:0; }
+  .cell .tag-family svg{ width:10px; height:10px; flex:none; margin-top:1px; }
   .cell .tag-candle-block{ margin-top:auto; }
   .cell .tag-candle-block + .tag-candle-block{ margin-top:1.5px; } /* אם יש גם הדלקה וגם הבדלה באותו יום */
   .cell .tag-candle-title{ color:var(--gold); font-weight:600; }
@@ -135,6 +138,34 @@ import { HDate, HebrewCalendar, Location, flags, months, gematriya } from 'https
 
 const JERUSALEM = new Location(31.7683, 35.2137, true, 'Asia/Jerusalem', 'ירושלים', 'IL', undefined, 754);
 
+// ════════════════════════════════════════════════════════════════════════
+// הגדרות משפחה — כל מה שבנאדם עשוי לעדכן ידנית נמצא כאן, במקום אחד:
+//   • טווח השנה (MONTHS) — לעדכן פעם בשנה
+//   • מקומות מגורים (FAMILY_LOCATIONS) — לעדכן אם מישהו עובר דירה/יישוב
+//   • תאריכים אישיים (FAMILY_DATES) — לעדכן אם מוסיפים בן/בת משפחה חדשים
+// שאר הקובץ (למטה) הוא לוגיקה גנרית שלא אמורה להשתנות בין שנים.
+// ════════════════════════════════════════════════════════════════════════
+
+// ── טווח הלוח: מאיזה חודש עברי עד איזה חודש עברי (כולל) להדפיס דף.
+//    כרגע: אלול (לפני השנה) עד תשרי של השנה שאחרי — כל "שנת המתנה" תשפ״ז.
+//    לעדכן רק את שתי השורות האלה בשנה הבאה; רשימת הדפים עצמה נגזרת אוטומטית.
+const START = { m: months.ELUL,    y: 5786 };
+const END   = { m: months.TISHREI, y: 5788 };
+
+// מייצר את כל החודשים העבריים בין START ל-END (כולל שני הקצוות), לפי הסדר
+// הקלנדרי (תשרי→...→אלול, לא לפי המספור המקראי שמתחיל בניסן).
+function monthRange(start, end) {
+  const list = [];
+  let hd = new HDate(1, start.m, start.y);
+  const endHd = new HDate(1, end.m, end.y);
+  while (hd.abs() <= endHd.abs()) {
+    list.push({ m: hd.getMonth(), y: hd.getFullYear() });
+    hd = hd.add(1, 'month');
+  }
+  return list;
+}
+const MONTHS = monthRange(START, END);
+
 // ── המשפחה: 4 בתים, כל אחד עם זמני הדלקת נרות/הבדלה משלו ──────────────
 const FAMILY_LOCATIONS = [
   { city: 'שערי תקווה', loc: new Location(32.12565, 35.02464, true, 'Asia/Jerusalem', 'שערי תקווה', 'IL') },
@@ -142,6 +173,51 @@ const FAMILY_LOCATIONS = [
   { city: 'אלעד',        loc: new Location(32.05088, 34.94957, true, 'Asia/Jerusalem', 'אלעד', 'IL') },
   { city: 'אביתר',       loc: new Location(32.11977, 35.27474, true, 'Asia/Jerusalem', 'אביתר', 'IL') },
 ];
+
+// ── תאריכים אישיים של המשפחה — יום+חודש+שנה עברית של האירוע המקורי בלבד.
+//    הגיל/שנת-הנישואין/שנת-הפטירה בכל שנה עתידית מחושבים מהמספר (year),
+//    לא נשמרים כאן — ולתצוגה הופכים לאותיות (gematriya) בזמן הרינדור.
+//    לענף אדר: מספיק לשמור ADAR_I תמיד (גם לשנה מקורית לא-מעוברת, שבה יש
+//    רק אדר אחד) — hebcal's getBirthdayOrAnniversary/getYahrzeit קובעים
+//    לבד אם שנה עתידית מעוברת מציגה את זה באדר א׳ או אדר ב׳.
+const FAMILY_DATES = [
+  // ימי הולדת
+  { name: 'יצחק שליסל',            type: 'birthday', day: 13, m: months.ELUL,     year: 5738 },
+  { name: 'קובי שליסל',             type: 'birthday', day: 24, m: months.ELUL,     year: 5735 },
+  { name: 'בת ציון שליסל',          type: 'birthday', day: 28, m: months.ELUL,     year: 5702 },
+  { name: 'גדליה שליסל',            type: 'birthday', day: 6,  m: months.TISHREI,  year: 5703 },
+  { name: 'אורלי שליסל',            type: 'birthday', day: 8,  m: months.NISAN,    year: 5738 },
+  { name: 'צוריאל שליסל',           type: 'birthday', day: 24, m: months.SIVAN,    year: 5761 },
+  { name: 'נעמה שליסל',             type: 'birthday', day: 30, m: months.SIVAN,    year: 5771 },
+  { name: 'איילת שליסל',            type: 'birthday', day: 4,  m: months.TAMUZ,    year: 5745 },
+  { name: 'תכלת שליסל',             type: 'birthday', day: 16, m: months.ELUL,     year: 5776 },
+  { name: 'הודיה שליסל',            type: 'birthday', day: 4,  m: months.CHESHVAN, year: 5768 },
+  { name: 'תחיה שליסל',             type: 'birthday', day: 21, m: months.TEVET,    year: 5773 },
+  { name: 'אסתר שליסל',             type: 'birthday', day: 5,  m: months.ADAR_I,   year: 5768 },
+  { name: 'גפן שליסל',              type: 'birthday', day: 18, m: months.NISAN,    year: 5775 },
+  { name: 'הלל שליסל',              type: 'birthday', day: 29, m: months.IYYAR,    year: 5770 },
+  { name: 'יונתן שליסל',            type: 'birthday', day: 2,  m: months.SIVAN,    year: 5764 },
+  { name: 'גולדי נוסרתי',           type: 'birthday', day: 9,  m: months.ELUL,     year: 5737 },
+  { name: 'יניב נוסרתי',            type: 'birthday', day: 16, m: months.TISHREI,  year: 5736 },
+  { name: 'אפרת נוסרתי',            type: 'birthday', day: 11, m: months.KISLEV,   year: 5768 },
+  { name: 'אוריה נוסרתי',           type: 'birthday', day: 16, m: months.TEVET,    year: 5776 },
+  { name: 'אודליה נוסרתי',          type: 'birthday', day: 28, m: months.SHVAT,    year: 5765 },
+  { name: 'שיראל נוסרתי',           type: 'birthday', day: 29, m: months.ADAR_I,   year: 5762 },
+  { name: 'איתמר נוסרתי',           type: 'birthday', day: 9,  m: months.NISAN,    year: 5763 },
+  { name: 'אמיתי נוסרתי',           type: 'birthday', day: 22, m: months.NISAN,    year: 5771 },
+  // ימי נישואין
+  { name: 'גדליה ובת ציון שליסל',   type: 'anniversary', day: 25, m: months.ELUL,  year: 5734 },
+  { name: 'אורלי וקובי שליסל',      type: 'anniversary', day: 26, m: months.SHVAT, year: 5759 },
+  { name: 'איילת ויצחק שליסל',      type: 'anniversary', day: 7,  m: months.NISAN, year: 5767 },
+  { name: 'גולדי ויניב נוסרתי',     type: 'anniversary', day: 5,  m: months.TAMUZ, year: 5761 },
+  // יארצייטים
+  { name: 'אסתר שליסל ז"ל',         relation: 'סבתא', type: 'yahrzeit', day: 6,  m: months.SHVAT, year: 5760 },
+  { name: 'לאונרד שליסל ז"ל',       type: 'yahrzeit', day: 17, m: months.SHVAT, year: 5718 },
+  { name: 'יוסף חיים שליסל ז"ל',    relation: 'סבא', type: 'yahrzeit', day: 26, m: months.SIVAN, year: 5727 },
+  { name: 'אסתר רבקה גרטנר ז"ל',    relation: 'סבתא', type: 'yahrzeit', day: 25, m: months.TAMUZ, year: 5710 },
+  { name: 'יצחק גרטנר ז"ל',         relation: 'סבא', type: 'yahrzeit', day: 13, m: months.SIVAN, year: 5718 },
+];
+
 const EXCLUDED = new Set([
   'שְׁמִירָת בֵּית הַסֵפֶר לְיוֹם הַעֲלִיָּה', 'יוֹם הֶרְצְל',
   'יוֹם זַ׳בּוֹטִינְסְקִי', 'יוֹם בֶּן־גּוּרִיּוֹן', 'יוֹם הַזִּכָּרוֹן לְיִצְחָק רַבִּין',
@@ -152,26 +228,6 @@ const EXCLUDED = new Set([
 ]);
 const WEEKDAYS_HE = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
 function fullYear(y){ return 'ה׳' + gematriya(y); }
-
-// ── Hebrew-month pages: current Elul through the Tishrei after next
-//    (the whole gift year: lead-up + all of 5787 + the next Rosh Hashana) ──
-const MONTHS = [
-  { m: months.ELUL,    y: 5786 },
-  { m: months.TISHREI, y: 5787 },
-  { m: months.CHESHVAN,y: 5787 },
-  { m: months.KISLEV,  y: 5787 },
-  { m: months.TEVET,   y: 5787 },
-  { m: months.SHVAT,   y: 5787 },
-  { m: months.ADAR_I,  y: 5787 },
-  { m: months.ADAR_II, y: 5787 },
-  { m: months.NISAN,   y: 5787 },
-  { m: months.IYYAR,   y: 5787 },
-  { m: months.SIVAN,   y: 5787 },
-  { m: months.TAMUZ,   y: 5787 },
-  { m: months.AV,      y: 5787 },
-  { m: months.ELUL,    y: 5787 },
-  { m: months.TISHREI, y: 5788 },
-];
 
 // Gregorian span covering all those Hebrew months, for holiday lookup
 const firstOfRange = new HDate(1, MONTHS[0].m, MONTHS[0].y).greg();
@@ -206,6 +262,31 @@ const DST_CHANGE = {}; // dateKey -> 'winter' | 'summer' — נשמר על הי�
       DST_CHANGE[dateKey(dayBefore)] = offset > prevOffset ? 'summer' : 'winter';
     }
     prevOffset = offset;
+  }
+}
+
+// ── תאריכי משפחה: מהתאריך העברי המקורי (FAMILY_DATES) מחשבים את ההתרחשות
+//    בכל שנה עברית שהלוח מכסה — hebcal's getBirthdayOrAnniversary/getYahrzeit
+//    כבר יודעים לטפל נכון באדר (אדר א׳/ב׳) בשנים מעוברות ────────────────
+const FAMILY_EVENTS = new Map(); // dateKey -> { type, text }[]
+{
+  const yearsInRange = new Set(MONTHS.map(mo => mo.y));
+  for (const fd of FAMILY_DATES) {
+    const origGreg = new HDate(fd.day, fd.m, fd.year).greg();
+    for (const targetYear of yearsInRange) {
+      const n = targetYear - fd.year;
+      if (n <= 0) continue; // לפני האירוע המקורי עצמו
+      const hd = fd.type === 'yahrzeit'
+        ? HebrewCalendar.getYahrzeit(targetYear, origGreg)
+        : HebrewCalendar.getBirthdayOrAnniversary(targetYear, origGreg);
+      if (!hd) continue;
+      const text = fd.type === 'birthday' ? `יום הולדת ${n} ל${fd.name}`
+        : fd.type === 'anniversary' ? `יום נישואין ${n} ל${fd.name}`
+        : `יארצייט ל${fd.relation ? fd.relation + ' ' : ''}${fd.name}`;
+      const fkey = dateKey(hd.greg());
+      if (!FAMILY_EVENTS.has(fkey)) FAMILY_EVENTS.set(fkey, []);
+      FAMILY_EVENTS.get(fkey).push({ type: fd.type, text });
+    }
   }
 }
 
@@ -303,19 +384,39 @@ function svgIcon(kind){
   if (kind === 'clock') {
     return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>`;
   }
+  if (kind === 'cake') {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3v3"/><circle cx="12" cy="6.5" r="1.1" fill="currentColor" stroke="none"/>
+      <rect x="4" y="11" width="16" height="8" rx="1.2"/>
+      <path d="M4 15c1.5-1.5 3-1.5 4 0s2.5 1.5 4 0 2.5-1.5 4 0 3 1.5 4 0"/></svg>`;
+  }
+  if (kind === 'rings') {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="9" cy="14" r="5"/><circle cx="15" cy="14" r="5"/></svg>`;
+  }
+  if (kind === 'candle') {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2c1.5 2 2 3.2 2 4.3 0 1.2-1 2.2-2 2.2s-2-1-2-2.2C10 5.2 10.5 4 12 2z" fill="currentColor" stroke="none"/>
+      <rect x="10" y="8" width="4" height="12" rx="1"/><line x1="7" y1="20" x2="17" y2="20"/></svg>`;
+  }
   return `<svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="36" r="20" fill="#c9432f"/>
     <path d="M32 16c2-4 6-6 10-5-1 4-5 7-10 5z" fill="#6b7a3f"/></svg>`;
 }
+
+// שנת ה"כותרת" של המתנה — השנה העברית המלאה שהלוח מיועד לה (זו שמתחילה
+// מיד אחרי אלול ההתחלה של START). נגזרת, לא מוקלדת בנפרד.
+const PRIMARY_YEAR = START.y + 1;
+document.title = `לוח שנה ${fullYear(PRIMARY_YEAR)} — מתנה לראש השנה`;
 
 // cover page
 const cover = document.createElement('div');
 cover.className = 'page cover';
 cover.innerHTML = `
   <div class="greeting">שנה טובה ומתוקה</div>
-  <div class="year-big">${fullYear(5787)}</div>
+  <div class="year-big">${fullYear(PRIMARY_YEAR)}</div>
   <div class="sub">לוח שנה עברי — מתנה לראש השנה</div>
   <div class="icons">${svgIcon('pomegranate')}${svgIcon('honey')}${svgIcon('apple')}</div>
-  <div class="caption">אלול ${fullYear(5786)} – תשרי ${fullYear(5788)}</div>
+  <div class="caption">אלול ${fullYear(START.y)} – תשרי ${fullYear(END.y)}</div>
   <div class="legend">
     <div class="legend-item"><span class="legend-swatch roshchodesh"></span>ראש חודש</div>
     <div class="legend-item"><span class="legend-swatch shabbat"></span>שבת</div>
@@ -449,6 +550,11 @@ for (const { m: monthNum, y: year } of MONTHS) {
       const nextWd = WEEKDAYS_HE[(weekday + 1) % 7]; // יום המעבר עצמו
       tags.push(`<div class="tag-dst">${svgIcon('clock')}<span><span class="tag-dst-title">${label}:</span> <span class="tag-dst-change">${change}</span><div class="tag-dst-sub">(בלילה שבין ${wd} ל${nextWd})</div></span></div>`);
     }
+
+    const familyIcon = { birthday: 'cake', anniversary: 'rings', yahrzeit: 'candle' };
+    (FAMILY_EVENTS.get(key) ?? []).forEach(fe => {
+      tags.push(`<div class="tag-family">${svgIcon(familyIcon[fe.type])}<span>${fe.text}</span></div>`);
+    });
 
     const el = document.createElement('div');
     el.className = cls.join(' ');
