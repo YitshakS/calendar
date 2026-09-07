@@ -542,10 +542,19 @@ for (const { m: monthNum, y: year } of MONTHS) {
     if (info.holidays && info.holidays.some(h => !NOT_MELACHA_ASUR.has(h) && !h.startsWith('רֹאשׁ חוֹדֶשׁ') && !h.startsWith('עֶרֶב') && !h.includes(':'))) cls.push('holiday');
     if (CHOL_HAMOED_DAYS.has(key) || (info.holidays && info.holidays.some(h => h === 'חֲנוּכָּה' || GRAY_LIKE_CHOL.has(h)))) cls.push('chol');
 
-    const tags = [];
+    // ── סדר התוכן בתא: מקור אמת יחיד, כדי שתוספת/שינוי עתידי לא "יקפוץ" למקום
+    //    הלא-נכון בטעות (כמו שקרה לתאריכי המשפחה). קודם מזהים את היום (שם
+    //    החג ואז הפרשה), אחר כך מה שאישי/מחושב באותו יום, ולבסוף פרטים/הערות. ──
+    const sec = {}; // section-name -> HTML string (או '' אם לא רלוונטי היום)
+    const RENDER_ORDER = [
+      'cholGeneric', 'holidayNames', 'timeLines', 'parsha', 'familyEvents',
+      'fastTable', 'omer', 'candles', 'havdalah', 'selichotNotes', 'dst',
+    ];
+
     // "חול המועד X" רק כשאין כבר שם ספציפי יותר לאותו יום (כמו הושענא רבה)
     const hasNamedHoliday = info.holidays && info.holidays.some(h => !h.includes(':'));
-    if (CHOL_HAMOED_DAYS.has(key) && !hasNamedHoliday) tags.push(`<div class="tag-chol">${CHOL_HAMOED_DAYS.get(key)}</div>`);
+    sec.cholGeneric = (CHOL_HAMOED_DAYS.has(key) && !hasNamedHoliday) ? `<div class="tag-chol">${CHOL_HAMOED_DAYS.get(key)}</div>` : '';
+
     if (info.holidays) {
       // names first, then embedded-time zmanim lines (e.g. "תחילת הצום: 04:29"), כל אחד בשורה נפרדת
       const sorted = [...info.holidays].sort((a, b) => {
@@ -558,15 +567,21 @@ for (const { m: monthNum, y: year } of MONTHS) {
       const SELICHOT_NOTES = new Set(['אשכנזים מתחילים סְלִיחוֹת', 'ספרדים מתחילים סְלִיחוֹת']);
       const nameLines = sorted.filter(h => !h.includes(':') && !SELICHOT_NOTES.has(h));
       const timeLines = sorted.filter(h => h.includes(':'));
-      nameLines.forEach(h => {
-        if (h === 'חול המועד סֻכּוֹת - הוֹשַׁעְנָא רַבָּה') {
-          tags.push(`<div class="tag-holiday"><span class="tag-chol">חול המועד סֻכּוֹת -</span> הוֹשַׁעְנָא רַבָּה</div>`);
-        } else {
-          tags.push(`<div class="tag-holiday">${h}</div>`);
-        }
-      });
-      timeLines.forEach(h => tags.push(`<div class="tag-time">${h}</div>`));
+      sec.holidayNames = nameLines.map(h => h === 'חול המועד סֻכּוֹת - הוֹשַׁעְנָא רַבָּה'
+        ? `<div class="tag-holiday"><span class="tag-chol">חול המועד סֻכּוֹת -</span> הוֹשַׁעְנָא רַבָּה</div>`
+        : `<div class="tag-holiday">${h}</div>`).join('');
+      sec.timeLines = timeLines.map(h => `<div class="tag-time">${h}</div>`).join('');
+      sec.selichotNotes = ['אשכנזים מתחילים סְלִיחוֹת', 'ספרדים מתחילים סְלִיחוֹת']
+        .filter(note => info.holidays.includes(note))
+        .map(note => `<div class="tag-holiday">${note}</div>`).join('');
     }
+
+    sec.parsha = info.parsha ? `<div class="tag-parsha">${info.parsha}</div>` : '';
+
+    const familyIcon = { birthday: 'cake', anniversary: 'rings', yahrzeit: 'candle' };
+    sec.familyEvents = (FAMILY_EVENTS.get(key) ?? [])
+      .map(fe => `<div class="tag-family">${svgIcon(familyIcon[fe.type])}<span>${fe.text}</span></div>`).join('');
+
     const ft = FAST_TIMES.get(key);
     const ftKinds = ft ? ['fast_start', 'fast_end', 'achilasChametz', 'biurChametz'].filter(k => ft[k]?.length) : [];
     // אם גם הדלקת נרות חלה באותו יום (למשל ערב פסח + תענית בכורות), משלבים אותה
@@ -582,31 +597,24 @@ for (const { m: monthNum, y: year } of MONTHS) {
         const vals = allKinds.map(k => `<span class="fast-val">${k === 'candles' ? info.candles[i].time : ft[k][i].time}</span>`).join('');
         return `<span>${cityLabel}</span>${vals}`;
       }).join('');
-      tags.push(`<div class="tag-candle-block fast-table" style="grid-template-columns:1fr repeat(${allKinds.length},auto)">
+      sec.fastTable = `<div class="tag-candle-block fast-table" style="grid-template-columns:1fr repeat(${allKinds.length},auto)">
         <span></span>${headers}
         ${rows}
-      </div>`);
+      </div>`;
+    } else {
+      sec.fastTable = '';
     }
-    if (info.parsha) tags.push(`<div class="tag-parsha">${info.parsha}</div>`);
+
     // ספירת העומר: לא צובעים כמו חג — חוץ מל"ג בעומר, שכבר מגיע כחג נפרד (למנוע כפילות)
-    if (info.omer && !info.holidays.includes(info.omer)) tags.push(`<div class="tag-omer">${info.omer}</div>`);
+    sec.omer = (info.omer && !info.holidays.includes(info.omer)) ? `<div class="tag-omer">${info.omer}</div>` : '';
+
     // יום כיפור: אותו רגע הוא גם הדלקת נרות/הבדלה וגם תחילת/סיום הצום — שני הניסוחים ביחד
     const isErevYK = info.holidays.some(h => h.startsWith('עֶרֶב יוֹם כִּפּוּר'));
     const isYK = info.holidays.some(h => h === 'יוֹם כִּפּוּר');
-
-    if (info.candles.length && !mergeCandles) {
-      const title = isErevYK ? 'הדלקת נרות / תחילת הצום:' : 'הדלקת נרות:';
-      tags.push(familyTimeBlock(title, info.candles));
-    }
-    if (info.havdalahs.length) {
-      const title = isYK ? 'הבדלה / סיום הצום:' : 'הבדלה:';
-      tags.push(familyTimeBlock(title, info.havdalahs));
-    }
-    if (info.holidays) {
-      ['אשכנזים מתחילים סְלִיחוֹת', 'ספרדים מתחילים סְלִיחוֹת'].forEach(note => {
-        if (info.holidays.includes(note)) tags.push(`<div class="tag-holiday">${note}</div>`);
-      });
-    }
+    sec.candles = (info.candles.length && !mergeCandles)
+      ? familyTimeBlock(isErevYK ? 'הדלקת נרות / תחילת הצום:' : 'הדלקת נרות:', info.candles) : '';
+    sec.havdalah = info.havdalahs.length
+      ? familyTimeBlock(isYK ? 'הבדלה / סיום הצום:' : 'הבדלה:', info.havdalahs) : '';
 
     const dst = DST_CHANGE[key]; // 'winter' | 'summer' | undefined — קבוע לישראל, המעבר תמיד בשעה 02:00
     if (dst) {
@@ -615,13 +623,12 @@ for (const { m: monthNum, y: year } of MONTHS) {
       const change = dst === 'winter' ? `<span>02:00</span>${arrow}<span>01:00</span>` : `<span>02:00</span>${arrow}<span>03:00</span>`;
       const wd = WEEKDAYS_HE[weekday]; // היום המוצג — היום שלפני המעבר
       const nextWd = WEEKDAYS_HE[(weekday + 1) % 7]; // יום המעבר עצמו
-      tags.push(`<div class="tag-dst">${svgIcon('clock')}<span><span class="tag-dst-title">${label}:</span> <span class="tag-dst-change">${change}</span><div class="tag-dst-sub">(בלילה שבין ${wd} ל${nextWd})</div></span></div>`);
+      sec.dst = `<div class="tag-dst">${svgIcon('clock')}<span><span class="tag-dst-title">${label}:</span> <span class="tag-dst-change">${change}</span><div class="tag-dst-sub">(בלילה שבין ${wd} ל${nextWd})</div></span></div>`;
+    } else {
+      sec.dst = '';
     }
 
-    const familyIcon = { birthday: 'cake', anniversary: 'rings', yahrzeit: 'candle' };
-    (FAMILY_EVENTS.get(key) ?? []).forEach(fe => {
-      tags.push(`<div class="tag-family">${svgIcon(familyIcon[fe.type])}<span>${fe.text}</span></div>`);
-    });
+    const tags = RENDER_ORDER.map(k => sec[k] ?? '').filter(Boolean);
 
     const el = document.createElement('div');
     el.className = cls.join(' ');
