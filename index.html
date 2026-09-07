@@ -115,7 +115,7 @@
   .cell .tag-dst-change{ display:inline-flex; align-items:center; gap:2px; }
   .cell .tag-family{ display:flex; align-items:flex-start; gap:3px; color:var(--plum); margin:0; }
   .cell .tag-family svg{ width:10px; height:10px; flex:none; margin-top:1px; }
-  .cell .fast-table{ display:grid; gap:0 4px; color:var(--gold); line-height:0.92; }
+  .cell .fast-table{ display:grid; gap:0 4px; color:var(--gold); }
   .cell .fast-table .fast-val{ text-align:center; }
   .cell .fast-head{ color:var(--ink-soft); font-weight:600; opacity:.8; }
   .cell .tag-candle-block{ margin-top:auto; }
@@ -226,8 +226,7 @@ const EXCLUDED = new Set([
   'יוֹם זַ׳בּוֹטִינְסְקִי', 'יוֹם בֶּן־גּוּרִיּוֹן', 'יוֹם הַזִּכָּרוֹן לְיִצְחָק רַבִּין',
   'יוֹם הַעֲלִיָּה', 'יוֹם הַמִּשׁפָּחָה', 'יוֹם הַשָׂפָה הַעִברִית', 'חַג הַסִּיגְד',
   'רֹאשׁ הַשָּׁנָה לְמַעְשַׂר בְּהֵמָה', 'חַג הַבָּנוֹת',
-  'פֶּסַח ו׳ (חוה״מ)', // רק טריגר להדלקת נרות של שביעי של פסח, אין צורך בכיתוב
-  'עֶרֶב פֶּסַח', // אין צורך בכיתוב (תענית בכורות/זמני חמץ/הדלקת נרות כבר מספרים את הסיפור)
+  'פֶּסַח ו׳ (חוה״מ)', // כפילות מיותרת — היום כבר מקבל "חול המועד פסח" דרך CHOL_HAMOED_DAYS
 ]);
 const WEEKDAYS_HE = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
 function fullYear(y){ return 'ה׳' + gematriya(y); }
@@ -374,7 +373,7 @@ const FAST_KIND_LABEL = {
   fast_start: 'כניסת הצום',
   fast_end: 'צאת הצום',
   achilasChametz: 'סוף זמן אכילת חמץ',
-  biurChametz: 'ביעור חמץ',
+  biurChametz: 'סוף זמן ביעור חמץ',
   candles: 'הדלקת נרות',
 };
 const FAST_TIMES = new Map(); // dateKey -> { [kind]: [{city,time}] }
@@ -409,6 +408,15 @@ for (const key of perFamilyFastKeys) {
 
 // ── Build DOM ───────────────────────────────────────────────────────
 const root = document.getElementById('pages');
+
+// בלוק הדלקת נרות/הבדלה: כותרת + רשימת ישוב-זמן, כשהזמנים מיושרים לעמודה
+// משותפת (לא תלויים באורך שם הישוב, בניגוד לטקסט חופשי בשורה אחת).
+function familyTimeBlock(title, entries){
+  const rows = entries.map(c => `<span>${c.city}</span><span>${c.time}</span>`).join('');
+  return `<div class="tag-candle-block"><div class="tag-candle-title">${title}</div>
+    <div style="display:grid; grid-template-columns:auto auto; justify-content:start; column-gap:4px; color:var(--gold)">${rows}</div>
+  </div>`;
+}
 
 function svgIcon(kind){
   if (kind === 'pomegranate') {
@@ -567,9 +575,12 @@ for (const { m: monthNum, y: year } of MONTHS) {
     if (ftKinds.length) {
       const allKinds = mergeCandles ? [...ftKinds, 'candles'] : ftKinds;
       const headers = allKinds.map(k => `<span class="fast-head fast-val">${FAST_KIND_LABEL[k]}</span>`).join('');
+      // בתענית בכורות (4 עמודות זמן) עמודת הישוב צרה מדי ל"שערי תקווה" בשורה אחת — מקצרים רק כאן
+      const isBechorot = info.holidays.includes('תַּעֲנִית בְּכוֹרוֹת');
       const rows = FAMILY_LOCATIONS.map(({ city }, i) => {
+        const cityLabel = (isBechorot && city === 'שערי תקווה') ? 'ש.תקווה' : city;
         const vals = allKinds.map(k => `<span class="fast-val">${k === 'candles' ? info.candles[i].time : ft[k][i].time}</span>`).join('');
-        return `<span>${city}</span>${vals}`;
+        return `<span>${cityLabel}</span>${vals}`;
       }).join('');
       tags.push(`<div class="tag-candle-block fast-table" style="grid-template-columns:1fr repeat(${allKinds.length},auto)">
         <span></span>${headers}
@@ -585,15 +596,11 @@ for (const { m: monthNum, y: year } of MONTHS) {
 
     if (info.candles.length && !mergeCandles) {
       const title = isErevYK ? 'הדלקת נרות / תחילת הצום:' : 'הדלקת נרות:';
-      tags.push(`<div class="tag-candle-block"><div class="tag-candle-title">${title}</div><div class="tag-candle-grid">${
-        info.candles.map(c => `<div class="tag-candle-row">${c.city} ${c.time}</div>`).join('')
-      }</div></div>`);
+      tags.push(familyTimeBlock(title, info.candles));
     }
     if (info.havdalahs.length) {
       const title = isYK ? 'הבדלה / סיום הצום:' : 'הבדלה:';
-      tags.push(`<div class="tag-candle-block"><div class="tag-candle-title">${title}</div><div class="tag-candle-grid">${
-        info.havdalahs.map(c => `<div class="tag-candle-row">${c.city} ${c.time}</div>`).join('')
-      }</div></div>`);
+      tags.push(familyTimeBlock(title, info.havdalahs));
     }
     if (info.holidays) {
       ['אשכנזים מתחילים סְלִיחוֹת', 'ספרדים מתחילים סְלִיחוֹת'].forEach(note => {
