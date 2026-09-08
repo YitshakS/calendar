@@ -94,6 +94,8 @@
   .cell.roshchodesh{ background:var(--olive-soft); border-color:#c9d6ac; } /* לא בשימוש כרגע — נשמר לשחזור מהיר, ראו מקרא */
 
   .cell .top-row{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .cell-photo{ position:absolute; bottom:1.5mm; left:1.5mm; width:48px; height:auto; pointer-events:none; }
+  .cell-photo-compare{ position:absolute; bottom:1.5mm; left:calc(1.5mm + 48px + 2px); width:48px; height:auto; pointer-events:none; }
   .cell .heb-num{ font-size:15px; font-weight:700; color:var(--ink); }
   .cell .greg-num{ font-size:9.5px; color:var(--gold); font-weight:600; direction:ltr; }
 
@@ -620,6 +622,9 @@ for (const { m: monthNum, y: year } of MONTHS) {
     sec.familyEvents = (FAMILY_EVENTS.get(key) ?? [])
       .map(fe => `<div class="tag-family">${emojiImg(familyIcon[fe.type].source, familyIcon[fe.type].code, 'tag-family-icon')}<span>${fe.text}</span></div>`).join('');
 
+    // תמונת פנים קטנה בפינה — רק ביום ההולדת של יצחק שליסל, בפינה הריקה בד"כ של התא
+    const hasYitzhakBirthday = (FAMILY_EVENTS.get(key) ?? []).some(fe => fe.type === 'birthday' && fe.text.includes('ליצחק שליסל'));
+
     const ft = FAST_TIMES.get(key);
     const ftKinds = ft ? ['fast_start', 'fast_end', 'achilasChametz', 'biurChametz'].filter(k => ft[k]?.length) : [];
     // אם גם הדלקת נרות חלה באותו יום (למשל ערב פסח + תענית בכורות), משלבים אותה
@@ -679,6 +684,7 @@ for (const { m: monthNum, y: year } of MONTHS) {
         <span class="greg-num">${greg.getDate()}.${greg.getMonth() + 1}</span>
       </div>
       <div class="tags">${tags.join('')}</div>
+      ${hasYitzhakBirthday ? '<img class="cell-photo" src="yitzhak_schlissel.png" alt=""><img class="cell-photo-compare" src="yitzhak_schlissel2.png" alt="">' : ''}
     `;
     grid.appendChild(el);
   }
