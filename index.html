@@ -182,45 +182,72 @@ const FAMILY_LOCATIONS = [
 //    לענף אדר: מספיק לשמור ADAR_I תמיד (גם לשנה מקורית לא-מעוברת, שבה יש
 //    רק אדר אחד) — hebcal's getBirthdayOrAnniversary/getYahrzeit קובעים
 //    לבד אם שנה עתידית מעוברת מציגה את זה באדר א׳ או אדר ב׳.
+// שדה greg: התאריך הלועזי (ISO) של ההתרחשות הראשונה בפועל — לאימות/תיעוד בלבד,
+// מחושב ישירות מ-day/m/year באמצעות HDate(...).greg(); לא מוצג בלוח המודפס.
 const FAMILY_DATES = [
-  // ימי הולדת
-  { name: 'יצחק שליסל',            type: 'birthday', day: 13, m: months.ELUL,     year: 5738 },
-  { name: 'קובי שליסל',             type: 'birthday', day: 24, m: months.ELUL,     year: 5735 },
-  { name: 'בת ציון שליסל',          type: 'birthday', day: 28, m: months.ELUL,     year: 5702 },
-  { name: 'גדליה שליסל',            type: 'birthday', day: 6,  m: months.TISHREI,  year: 5703 },
-  { name: 'אורלי שליסל',            type: 'birthday', day: 8,  m: months.NISAN,    year: 5738 },
-  { name: 'צוריאל שליסל',           type: 'birthday', day: 24, m: months.SIVAN,    year: 5761 },
-  { name: 'נעמה שליסל',             type: 'birthday', day: 30, m: months.SIVAN,    year: 5771 },
-  { name: 'איילת שליסל',            type: 'birthday', day: 4,  m: months.TAMUZ,    year: 5745 },
-  { name: 'תכלת שליסל',             type: 'birthday', day: 16, m: months.ELUL,     year: 5776 },
-  { name: 'הודיה שליסל',            type: 'birthday', day: 4,  m: months.CHESHVAN, year: 5768 },
-  { name: 'תחיה שליסל',             type: 'birthday', day: 21, m: months.TEVET,    year: 5773 },
-  { name: 'אסתר שליסל',             type: 'birthday', day: 5,  m: months.ADAR_I,   year: 5768 },
-  { name: 'גפן שליסל',              type: 'birthday', day: 18, m: months.NISAN,    year: 5775 },
-  { name: 'הלל שליסל',              type: 'birthday', day: 29, m: months.IYYAR,    year: 5770 },
-  { name: 'יונתן שליסל',            type: 'birthday', day: 2,  m: months.SIVAN,    year: 5764 },
-  { name: 'אפרת שליסל',             type: 'birthday', day: 6,  m: months.ADAR_II,  year: 5760 },
-  { name: 'יעלה שליסל',             type: 'birthday', day: 27, m: months.CHESHVAN, year: 5786 },
-  { name: 'גולדי נוסרתי',           type: 'birthday', day: 9,  m: months.ELUL,     year: 5737 },
-  { name: 'יניב נוסרתי',            type: 'birthday', day: 16, m: months.TISHREI,  year: 5736 },
-  { name: 'אפרת נוסרתי',            type: 'birthday', day: 11, m: months.KISLEV,   year: 5768 },
-  { name: 'אוריה נוסרתי',           type: 'birthday', day: 16, m: months.TEVET,    year: 5776 },
-  { name: 'אודליה נוסרתי',          type: 'birthday', day: 28, m: months.SHVAT,    year: 5765 },
-  { name: 'שיראל נוסרתי',           type: 'birthday', day: 29, m: months.ADAR_I,   year: 5762 },
-  { name: 'איתמר נוסרתי',           type: 'birthday', day: 9,  m: months.NISAN,    year: 5763 },
-  { name: 'אמיתי נוסרתי',           type: 'birthday', day: 22, m: months.NISAN,    year: 5771 },
-  // ימי נישואין
-  { name: 'בת ציון וגדליה',         type: 'anniversary', day: 25, m: months.ELUL,  year: 5734 },
-  { name: 'אורלי וקובי',            type: 'anniversary', day: 26, m: months.SHVAT, year: 5759 },
-  { name: 'איילת ויצחק',            type: 'anniversary', day: 7,  m: months.NISAN, year: 5767 },
-  { name: 'גולדי ויניב',            type: 'anniversary', day: 5,  m: months.TAMUZ, year: 5761 },
-  { name: 'אפרת וצוריאל',           type: 'anniversary', day: 25, m: months.ADAR_II, year: 5784 },
-  // יארצייטים
-  { name: 'אסתר שליסל ז"ל',         relation: 'סבתא', type: 'yahrzeit', day: 6,  m: months.SHVAT, year: 5760 },
-  { name: 'לאונרד שליסל ז"ל',       type: 'yahrzeit', day: 17, m: months.SHVAT, year: 5718 },
-  { name: 'יוסף חיים שליסל ז"ל',    relation: 'סבא', type: 'yahrzeit', day: 26, m: months.SIVAN, year: 5727 },
-  { name: 'אסתר רבקה גרטנר ז"ל',    relation: 'סבתא', type: 'yahrzeit', day: 25, m: months.TAMUZ, year: 5710 },
-  { name: 'יצחק גרטנר ז"ל',         relation: 'סבא', type: 'yahrzeit', day: 13, m: months.SIVAN, year: 5718 },
+  // ענף גרטנר יצחק ורבקה (סבא-רבא וסבתא-רבא, צד אמא)
+  { name: 'יצחק גרטנר ז"ל',         relation: 'סבא', type: 'yahrzeit', day: 13, m: months.SIVAN, year: 5718, greg: '1958-06-01' },
+  { name: 'אסתר רבקה גרטנר ז"ל',    relation: 'סבתא', type: 'yahrzeit', day: 25, m: months.TAMUZ, year: 5750, greg: '1990-07-18' },
+
+  // ענף שליסל יוסף ואסתר (סבא-רבא וסבתא-רבא, צד אבא)
+  { name: 'יוסף חיים שליסל ז"ל',    relation: 'סבא', type: 'yahrzeit', day: 26, m: months.SIVAN, year: 5767, greg: '2007-06-12' },
+  { name: 'אסתר שליסל ז"ל',         relation: 'סבתא', type: 'yahrzeit', day: 6,  m: months.SHVAT, year: 5760, greg: '2000-01-13' },
+  { name: 'לאונרד שליסל ז"ל',       type: 'yahrzeit', day: 17, m: months.SHVAT, year: 5718, greg: '1958-02-07' },
+
+  // ענף שליסל גדליה ובת ציון (סבא וסבתא)
+  { name: 'בת ציון שליסל',          type: 'birthday', day: 28, m: months.ELUL,     year: 5702, greg: '1942-09-10' },
+  { name: 'גדליה שליסל',            type: 'birthday', day: 6,  m: months.TISHREI,  year: 5703, greg: '1942-09-17' },
+  { name: 'בת ציון וגדליה',         type: 'anniversary', day: 25, m: months.ELUL,  year: 5734, greg: '1974-09-12' },
+
+  // ענף שליסל קובי ואורלי (הבן הבכור)
+  { name: 'קובי שליסל',             type: 'birthday', day: 24, m: months.ELUL,     year: 5735, greg: '1975-08-31' },
+  { name: 'אורלי שליסל',            type: 'birthday', day: 8,  m: months.NISAN,    year: 5738, greg: '1978-04-15' },
+  { name: 'אורלי וקובי',            type: 'anniversary', day: 26, m: months.SHVAT, year: 5759, greg: '1999-02-12' },
+  { name: 'צוריאל שליסל',           type: 'birthday', day: 24, m: months.SIVAN,    year: 5761, greg: '2001-06-15' },
+  { name: 'יונתן שליסל',            type: 'birthday', day: 2,  m: months.SIVAN,    year: 5764, greg: '2004-05-22' },
+  { name: 'הודיה שליסל',            type: 'birthday', day: 4,  m: months.CHESHVAN, year: 5768, greg: '2007-10-16' },
+  { name: 'נעמה שליסל',             type: 'birthday', day: 30, m: months.SIVAN,    year: 5771, greg: '2011-07-02' },
+  { name: 'אפרת שליסל',             type: 'birthday', day: 6,  m: months.ADAR_II,  year: 5760, greg: '2000-03-13' },
+  { name: 'אפרת וצוריאל',           type: 'anniversary', day: 25, m: months.ADAR_II, year: 5784, greg: '2024-04-04' },
+  { name: 'יעלה שליסל',             type: 'birthday', day: 27, m: months.CHESHVAN, year: 5786, greg: '2025-11-18' },
+
+  // ענף נוסרתי גולדי ויניב (הבת האמצעית)
+  { name: 'יניב נוסרתי',            type: 'birthday', day: 16, m: months.TISHREI,  year: 5736, greg: '1975-09-21' },
+  { name: 'גולדי נוסרתי',           type: 'birthday', day: 9,  m: months.ELUL,     year: 5737, greg: '1977-08-23' },
+  { name: 'גולדי ויניב',            type: 'anniversary', day: 5,  m: months.TAMUZ, year: 5761, greg: '2001-06-26' },
+  { name: 'שיראל נוסרתי',           type: 'birthday', day: 29, m: months.ADAR_I,   year: 5762, greg: '2002-03-13' },
+  { name: 'שיראל ורועי נוזר',       type: 'anniversary', day: 10, m: months.ELUL, year: 5786, greg: '2026-08-23' },
+  { name: 'איתמר נוסרתי',           type: 'birthday', day: 9,  m: months.NISAN,    year: 5763, greg: '2003-04-11' },
+  { name: 'רות אלישבע ואיתמר',      type: 'anniversary', day: 15, m: months.SIVAN,  year: 5785, greg: '2025-06-11' },
+  { name: 'אודליה נוסרתי',          type: 'birthday', day: 28, m: months.SHVAT,    year: 5765, greg: '2005-02-07' },
+  { name: 'אפרת נוסרתי',            type: 'birthday', day: 11, m: months.KISLEV,   year: 5768, greg: '2007-11-21' },
+  { name: 'אמיתי נוסרתי',           type: 'birthday', day: 22, m: months.NISAN,    year: 5771, greg: '2011-04-26' },
+  { name: 'אוריה נוסרתי',           type: 'birthday', day: 16, m: months.TEVET,    year: 5776, greg: '2015-12-28' },
+  { name: 'יוסף שאול נוסרתי',       type: 'birthday', day: 15, m: months.SIVAN,    year: 5786, greg: '2026-05-31' },
+
+  // ענף שליסל יצחק ואיילת (הבן הצעיר)
+  { name: 'יצחק שליסל',            type: 'birthday', day: 13, m: months.ELUL,     year: 5738, greg: '1978-09-15' },
+  { name: 'איילת שליסל',            type: 'birthday', day: 4,  m: months.TAMUZ,    year: 5745, greg: '1985-06-23' },
+  { name: 'איילת ויצחק',            type: 'anniversary', day: 7,  m: months.NISAN, year: 5767, greg: '2007-03-26' },
+  { name: 'אסתר שליסל',             type: 'birthday', day: 5,  m: months.ADAR_I,   year: 5768, greg: '2008-02-11' },
+  { name: 'הלל שליסל',              type: 'birthday', day: 29, m: months.IYYAR,    year: 5770, greg: '2010-05-13' },
+  { name: 'תחיה שליסל',             type: 'birthday', day: 21, m: months.TEVET,    year: 5773, greg: '2013-01-03' },
+  { name: 'גפן שליסל',              type: 'birthday', day: 18, m: months.NISAN,    year: 5775, greg: '2015-04-07' },
+  { name: 'תכלת שליסל',             type: 'birthday', day: 16, m: months.ELUL,     year: 5776, greg: '2016-09-19' },
+
+  // ענף ממתין — מהאקסל, נאספו אך לא הוחלט להציג בלוח (hidden: true → לא נכנס ל-FAMILY_EVENTS)
+  { name: 'פייגה שליסל ז"ל',        type: 'yahrzeit', day: 3,  m: months.IYYAR, year: 5674, greg: '1914-04-29', hidden: true },
+  { name: 'לואיס שליסל ז"ל',        type: 'yahrzeit', day: 9,  m: months.NISAN, year: 5675, greg: '1915-03-24', hidden: true },
+  { name: 'רוזי שליסל ז"ל',         type: 'yahrzeit', day: 19, m: months.ELUL,  year: 5735, greg: '1975-08-26', hidden: true },
+  { name: 'איבי שליסל ז"ל',         type: 'yahrzeit', day: 11, m: months.AV,    year: 5746, greg: '1986-08-16', hidden: true },
+  { name: 'יצחק גרטנר ז"ל',         type: 'birthday', day: 4,  m: months.AV,    year: 5663, greg: '1903-07-28', hidden: true },
+  { name: 'אסתר רבקה גרטנר ז"ל',    type: 'birthday', day: 1,  m: months.ADAR_I, year: 5665, greg: '1905-02-06', hidden: true },
+  { name: 'יוסף חיים שליסל ז"ל',    type: 'birthday', day: 2,  m: months.TEVET, year: 5673, greg: '1912-12-12', hidden: true },
+  { name: 'אסתר שליסל ז"ל',         type: 'birthday', day: 28, m: months.TAMUZ, year: 5674, greg: '1914-07-22', hidden: true },
+  { name: 'יצחק ואסתר רבקה גרטנר ז"ל', type: 'anniversary', hidden: true }, // אין תאריך באקסל
+  { name: 'יוסף ואסתר שליסל ז"ל',   type: 'anniversary', hidden: true }, // אין תאריך באקסל
+  { name: 'רותי נוסרתי',            type: 'birthday', hidden: true }, // אין תאריך באקסל
+  { name: 'רועי נוזר',              type: 'birthday', hidden: true }, // אין תאריך באקסל
 ];
 
 const EXCLUDED = new Set([
@@ -276,6 +303,7 @@ const FAMILY_EVENTS = new Map(); // dateKey -> { type, text }[]
 {
   const yearsInRange = new Set(MONTHS.map(mo => mo.y));
   for (const fd of FAMILY_DATES) {
+    if (fd.hidden) continue; // נאסף לתיעוד בלבד — לא מוצג בלוח המודפס
     const origGreg = new HDate(fd.day, fd.m, fd.year).greg();
     for (const targetYear of yearsInRange) {
       const n = targetYear - fd.year;
