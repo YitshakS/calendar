@@ -94,8 +94,7 @@
   .cell.roshchodesh{ background:var(--olive-soft); border-color:#c9d6ac; } /* לא בשימוש כרגע — נשמר לשחזור מהיר, ראו מקרא */
 
   .cell .top-row{ display:flex; justify-content:space-between; align-items:flex-start; }
-  .cell-photo{ position:absolute; bottom:1.5mm; left:1.5mm; width:48px; height:auto; pointer-events:none; }
-  .cell-photo-compare{ position:absolute; bottom:1.5mm; left:calc(1.5mm + 48px + 2px); width:48px; height:auto; pointer-events:none; }
+  .cell-photo{ position:absolute; bottom:0.5mm; left:0.5mm; height:89px; width:auto; pointer-events:none; }
   .cell .heb-num{ font-size:15px; font-weight:700; color:var(--ink); }
   .cell .greg-num{ font-size:9.5px; color:var(--gold); font-weight:600; direction:ltr; }
 
@@ -116,6 +115,7 @@
   .cell .tag-dst-change{ display:inline-flex; align-items:center; gap:2px; }
   .cell .tag-family{ display:flex; align-items:center; gap:3px; color:var(--plum); }
   .cell .tag-family-icon{ width:18px; height:18px; flex:none; }
+  .cell .tag-family-split .split-lines{ display:flex; flex-direction:column; line-height:1.2; }
   .cell .fast-table{ display:grid; gap:0 4px; color:var(--gold); }
   .cell .fast-table .fast-val{ text-align:center; }
   .cell .fast-head{ color:var(--gold); font-weight:600; }
@@ -186,6 +186,13 @@ const FAMILY_LOCATIONS = [
 //    לבד אם שנה עתידית מעוברת מציגה את זה באדר א׳ או אדר ב׳.
 // שדה greg: התאריך הלועזי (ISO) של ההתרחשות הראשונה בפועל — לאימות/תיעוד בלבד,
 // מחושב ישירות מ-day/m/year באמצעות HDate(...).greg(); לא מוצג בלוח המודפס.
+// תמונות פנים קטנות המוצגות בפינת יום ההולדת (קבצים בתיקיית pics, בלי עיבוד)
+const BIRTHDAY_PHOTOS = {
+  'יצחק שליסל': 'pics/יצחק שליסל.png',
+  'הלל שליסל': 'pics/הלל שליסל.png',
+  'תכלת שליסל': 'pics/תכלת שליסל.png',
+};
+
 const FAMILY_DATES = [
   // ענף גרטנר יצחק ורבקה (סבא-רבא וסבתא-רבא, צד אמא)
   { name: 'יצחק גרטנר ז"ל',         relation: 'סבא', type: 'yahrzeit', day: 13, m: months.SIVAN, year: 5718, greg: '1958-06-01' },
@@ -199,28 +206,28 @@ const FAMILY_DATES = [
   // ענף שליסל גדליה ובת ציון (סבא וסבתא)
   { name: 'בת ציון שליסל',          type: 'birthday', day: 28, m: months.ELUL,     year: 5702, greg: '1942-09-10' },
   { name: 'גדליה שליסל',            type: 'birthday', day: 6,  m: months.TISHREI,  year: 5703, greg: '1942-09-17' },
-  { name: 'בת ציון וגדליה',         type: 'anniversary', day: 25, m: months.ELUL,  year: 5734, greg: '1974-09-12' },
+  { name: 'בת ציון וגדליה שליסל',   type: 'anniversary', day: 25, m: months.ELUL,  year: 5734, greg: '1974-09-12' },
 
   // ענף שליסל קובי ואורלי (הבן הבכור)
   { name: 'קובי שליסל',             type: 'birthday', day: 24, m: months.ELUL,     year: 5735, greg: '1975-08-31' },
   { name: 'אורלי שליסל',            type: 'birthday', day: 8,  m: months.NISAN,    year: 5738, greg: '1978-04-15' },
-  { name: 'אורלי וקובי',            type: 'anniversary', day: 26, m: months.SHVAT, year: 5759, greg: '1999-02-12' },
+  { name: 'אורלי וקובי שליסל',      type: 'anniversary', day: 26, m: months.SHVAT, year: 5759, greg: '1999-02-12' },
   { name: 'צוריאל שליסל',           type: 'birthday', day: 24, m: months.SIVAN,    year: 5761, greg: '2001-06-15' },
   { name: 'יונתן שליסל',            type: 'birthday', day: 2,  m: months.SIVAN,    year: 5764, greg: '2004-05-22' },
   { name: 'הודיה שליסל',            type: 'birthday', day: 4,  m: months.CHESHVAN, year: 5768, greg: '2007-10-16' },
   { name: 'נעמה שליסל',             type: 'birthday', day: 30, m: months.SIVAN,    year: 5771, greg: '2011-07-02' },
   { name: 'אפרת שליסל',             type: 'birthday', day: 6,  m: months.ADAR_II,  year: 5760, greg: '2000-03-13' },
-  { name: 'אפרת וצוריאל',           type: 'anniversary', day: 25, m: months.ADAR_II, year: 5784, greg: '2024-04-04' },
+  { name: 'אפרת וצוריאל שליסל',     type: 'anniversary', day: 25, m: months.ADAR_II, year: 5784, greg: '2024-04-04' },
   { name: 'יעלה שליסל',             type: 'birthday', day: 27, m: months.CHESHVAN, year: 5786, greg: '2025-11-18' },
 
   // ענף נוסרתי גולדי ויניב (הבת האמצעית)
   { name: 'יניב נוסרתי',            type: 'birthday', day: 16, m: months.TISHREI,  year: 5736, greg: '1975-09-21' },
   { name: 'גולדי נוסרתי',           type: 'birthday', day: 9,  m: months.ELUL,     year: 5737, greg: '1977-08-23' },
-  { name: 'גולדי ויניב',            type: 'anniversary', day: 5,  m: months.TAMUZ, year: 5761, greg: '2001-06-26' },
-  { name: 'שיראל נוסרתי',           type: 'birthday', day: 29, m: months.ADAR_I,   year: 5762, greg: '2002-03-13' },
+  { name: 'גולדי ויניב נוסרתי',     type: 'anniversary', day: 5,  m: months.TAMUZ, year: 5761, greg: '2001-06-26' },
+  { name: 'שיראל נוזר',             type: 'birthday', day: 29, m: months.ADAR_I,   year: 5762, greg: '2002-03-13' },
   { name: 'שיראל ורועי נוזר',       type: 'anniversary', day: 10, m: months.ELUL, year: 5786, greg: '2026-08-23' },
   { name: 'איתמר נוסרתי',           type: 'birthday', day: 9,  m: months.NISAN,    year: 5763, greg: '2003-04-11' },
-  { name: 'רות אלישבע ואיתמר',      type: 'anniversary', day: 15, m: months.SIVAN,  year: 5785, greg: '2025-06-11' },
+  { name: 'רות אלישבע ואיתמר נוסרתי', type: 'anniversary', day: 15, m: months.SIVAN,  year: 5785, greg: '2025-06-11' },
   { name: 'אודליה נוסרתי',          type: 'birthday', day: 28, m: months.SHVAT,    year: 5765, greg: '2005-02-07' },
   { name: 'אפרת נוסרתי',            type: 'birthday', day: 11, m: months.KISLEV,   year: 5768, greg: '2007-11-21' },
   { name: 'אמיתי נוסרתי',           type: 'birthday', day: 22, m: months.NISAN,    year: 5771, greg: '2011-04-26' },
@@ -230,7 +237,7 @@ const FAMILY_DATES = [
   // ענף שליסל יצחק ואיילת (הבן הצעיר)
   { name: 'יצחק שליסל',            type: 'birthday', day: 13, m: months.ELUL,     year: 5738, greg: '1978-09-15' },
   { name: 'איילת שליסל',            type: 'birthday', day: 4,  m: months.TAMUZ,    year: 5745, greg: '1985-06-23' },
-  { name: 'איילת ויצחק',            type: 'anniversary', day: 7,  m: months.NISAN, year: 5767, greg: '2007-03-26' },
+  { name: 'איילת ויצחק שליסל',      type: 'anniversary', day: 7,  m: months.NISAN, year: 5767, greg: '2007-03-26' },
   { name: 'אסתר שליסל',             type: 'birthday', day: 5,  m: months.ADAR_I,   year: 5768, greg: '2008-02-11' },
   { name: 'הלל שליסל',              type: 'birthday', day: 29, m: months.IYYAR,    year: 5770, greg: '2010-05-13' },
   { name: 'תחיה שליסל',             type: 'birthday', day: 21, m: months.TEVET,    year: 5773, greg: '2013-01-03' },
@@ -314,12 +321,14 @@ const FAMILY_EVENTS = new Map(); // dateKey -> { type, text }[]
         ? HebrewCalendar.getYahrzeit(targetYear, origGreg)
         : HebrewCalendar.getBirthdayOrAnniversary(targetYear, origGreg);
       if (!hd) continue;
-      const text = fd.type === 'birthday' ? `יום הולדת ${n} ל${fd.name}`
-        : fd.type === 'anniversary' ? `יום נישואין ${n} ל${fd.name}`
-        : `יארצייט ל${fd.relation ? fd.relation + ' ' : ''}${fd.name}`;
+      const line1 = fd.type === 'birthday' ? `יום הולדת ${n}`
+        : fd.type === 'anniversary' ? `יום נישואין ${n}`
+        : `יארצייט`;
+      const line2 = fd.type === 'yahrzeit' ? `ל${fd.relation ? fd.relation + ' ' : ''}${fd.name}` : `ל${fd.name}`;
+      const text = `${line1} ${line2}`;
       const fkey = dateKey(hd.greg());
       if (!FAMILY_EVENTS.has(fkey)) FAMILY_EVENTS.set(fkey, []);
-      FAMILY_EVENTS.get(fkey).push({ type: fd.type, text });
+      FAMILY_EVENTS.get(fkey).push({ type: fd.type, text, line1, line2 });
     }
   }
 }
@@ -619,11 +628,23 @@ for (const { m: monthNum, y: year } of MONTHS) {
       anniversary: { source: 'noto', code: '1f48d' },
       yahrzeit: { source: 'twemoji', code: '1f56f' },
     };
-    sec.familyEvents = (FAMILY_EVENTS.get(key) ?? [])
-      .map(fe => `<div class="tag-family">${emojiImg(familyIcon[fe.type].source, familyIcon[fe.type].code, 'tag-family-icon')}<span>${fe.text}</span></div>`).join('');
 
-    // תמונת פנים קטנה בפינה — רק ביום ההולדת של יצחק שליסל, בפינה הריקה בד"כ של התא
-    const hasYitzhakBirthday = (FAMILY_EVENTS.get(key) ?? []).some(fe => fe.type === 'birthday' && fe.text.includes('ליצחק שליסל'));
+    // תמונת פנים קטנה בפינה — ביום ההולדת של מי שיש לו תמונה בתיקיית pics, בפינה הריקה בד"כ של התא
+    const birthdayPhoto = Object.keys(BIRTHDAY_PHOTOS)
+      .find(name => (FAMILY_EVENTS.get(key) ?? []).some(fe => fe.type === 'birthday' && fe.text.includes('ל' + name)));
+
+    sec.familyEvents = (FAMILY_EVENTS.get(key) ?? [])
+      .map(fe => {
+        const icon = emojiImg(familyIcon[fe.type].source, familyIcon[fe.type].code, 'tag-family-icon');
+        // יום נישואין ויארצייט תמיד מפוצלים לשתי שורות; יום הולדת מפוצל רק ביום עם תמונה גדולה
+        // (כדי שהטקסט לא יתפרס לרוחב על פני התמונה בצד השני של התא)
+        const shouldSplit = fe.type === 'anniversary' || fe.type === 'yahrzeit'
+          || (fe.type === 'birthday' && birthdayPhoto && fe.text.includes('ל' + birthdayPhoto));
+        if (shouldSplit) {
+          return `<div class="tag-family tag-family-split">${icon}<span class="split-lines"><span>${fe.line1}</span><span>${fe.line2}</span></span></div>`;
+        }
+        return `<div class="tag-family">${icon}<span>${fe.text}</span></div>`;
+      }).join('');
 
     const ft = FAST_TIMES.get(key);
     const ftKinds = ft ? ['fast_start', 'fast_end', 'achilasChametz', 'biurChametz'].filter(k => ft[k]?.length) : [];
@@ -684,7 +705,7 @@ for (const { m: monthNum, y: year } of MONTHS) {
         <span class="greg-num">${greg.getDate()}.${greg.getMonth() + 1}</span>
       </div>
       <div class="tags">${tags.join('')}</div>
-      ${hasYitzhakBirthday ? '<img class="cell-photo" src="yitzhak_schlissel.png" alt=""><img class="cell-photo-compare" src="yitzhak_schlissel2.png" alt="">' : ''}
+      ${birthdayPhoto ? `<img class="cell-photo" src="${BIRTHDAY_PHOTOS[birthdayPhoto]}" alt="">` : ''}
     `;
     grid.appendChild(el);
   }
