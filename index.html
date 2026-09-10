@@ -63,6 +63,19 @@
   .month-head .heb{ font-size:30px; font-weight:700; color:var(--ink); }
   .month-head .greg{ font-size:16px; color:var(--gold); font-weight:600; }
 
+  /* ── עמוד סיכום אירועי משפחה ──────────────────────────────────── */
+  .summary-tables{ display:flex; gap:6mm; height:calc(100% - 14mm); }
+  .summary-table{ flex:1; border-collapse:collapse; font-size:10px; align-self:start; table-layout:fixed; width:100%; }
+  .summary-table th{ text-align:right; border-bottom:2px solid var(--line-strong); padding:1.2mm 1.2mm; color:var(--ink-soft); font-weight:600; font-size:9px; }
+  .summary-table td{ padding:0.8mm 1.2mm; border-bottom:1px solid var(--line); vertical-align:top; white-space:nowrap; overflow:visible; text-overflow:clip; }
+  .summary-table td.ev{ color:var(--ink); white-space:normal; }
+  .summary-table td.heb-date{ color:var(--gold); font-weight:600; white-space:nowrap; }
+  .summary-table td.greg-date{ color:var(--ink-soft); white-space:nowrap; direction:ltr; text-align:left; }
+  .summary-table td.note{ font-size:9px; white-space:normal; overflow:visible; text-overflow:clip; line-height:1.25; }
+  .summary-table td.note-ok{ color:var(--olive); }
+  .summary-table td.note-diff{ color:var(--pomegranate); font-weight:600; }
+  .summary-table td.note-none{ color:var(--ink-soft); font-style:italic; }
+
   .grid{
     display:grid;
     grid-template-columns:repeat(7,1fr);
@@ -259,6 +272,87 @@ const FAMILY_DATES = [
   { name: 'רועי נוזר',              type: 'birthday', hidden: true }, // אין תאריך באקסל
 ];
 
+// ── אימות חיצוני (לצורך בקרה בלבד — לא קשור לשום שדה מעל) ──────────────
+// לכל אירוע: מה שרשום בפועל בקובץ האקסל (עברי + לועזי, כפי שהוקלדו שם)
+// ומה שרשום בפועל בלוח "לוח משפחתי" בגוגל (התיוג העברי של האירוע החוזר).
+// נאסף ידנית ע"י בדיקה ישירה של שני המקורות (לא מחושב מהקוד של הלוח עצמו).
+// xlsxHeb/xlsxGreg: null אם האקסל לא נתן את השדה הזה בכלל.
+// gcalHeb: null אם אין בלוח גוגל אירוע מתאים בכלל (טרם נוסף).
+const EXTERNAL_VERIFICATION = {
+  'יצחק גרטנר ז"ל|yahrzeit':      { xlsxHeb:{d:13,m:months.SIVAN,y:5718},   xlsxGreg:'1958-06-01', gcalHeb:{d:13,m:months.SIVAN} },
+  'אסתר רבקה גרטנר ז"ל|yahrzeit': { xlsxHeb:{d:25,m:months.TAMUZ,y:5750},   xlsxGreg:'1990-07-18', gcalHeb:{d:25,m:months.TAMUZ} },
+  'יוסף חיים שליסל ז"ל|yahrzeit': { xlsxHeb:{d:26,m:months.SIVAN,y:5767},   xlsxGreg:'2007-06-12', gcalHeb:{d:26,m:months.SIVAN} },
+  'לאונרד שליסל ז"ל|yahrzeit':    { xlsxHeb:{d:17,m:months.SHVAT,y:5718},   xlsxGreg:'1958-02-07', gcalHeb:{d:17,m:months.SHVAT} },
+  'אסתר שליסל ז"ל|yahrzeit':      { xlsxHeb:{d:6, m:months.SHVAT,y:5760},   xlsxGreg:'2000-01-12', gcalHeb:{d:6, m:months.SHVAT}, confirmedAfterSunset: true },
+  'בת ציון שליסל|birthday':       { xlsxHeb:{d:28,m:months.ELUL,y:5702},    xlsxGreg:'1942-09-08', gcalHeb:{d:28,m:months.ELUL} },
+  'גדליה שליסל|birthday':         { xlsxHeb:{d:6, m:months.TISHREI,y:5703}, xlsxGreg:'1942-09-17', gcalHeb:{d:6, m:months.TISHREI} },
+  'בת ציון וגדליה שליסל|anniversary': { xlsxHeb:{d:25,m:months.ELUL,y:5734}, xlsxGreg:'1974-09-12', gcalHeb:{d:25,m:months.ELUL} },
+  'קובי שליסל|birthday':          { xlsxHeb:{d:24,m:months.ELUL,y:5735},    xlsxGreg:'1975-08-31', gcalHeb:{d:24,m:months.ELUL} },
+  'אורלי שליסל|birthday':         { xlsxHeb:{d:8, m:months.NISAN,y:5738},   xlsxGreg:'1978-04-15', gcalHeb:{d:8, m:months.NISAN} },
+  'אורלי וקובי שליסל|anniversary':{ xlsxHeb:{d:26,m:months.SHVAT,y:5759},   xlsxGreg:'1999-02-11', gcalHeb:{d:26,m:months.SHVAT}, confirmedAfterSunset: true },
+  'צוריאל שליסל|birthday':        { xlsxHeb:{d:24,m:months.SIVAN,y:5761},   xlsxGreg:'2001-06-15', gcalHeb:{d:24,m:months.SIVAN} },
+  'יונתן שליסל|birthday':         { xlsxHeb:{d:2, m:months.SIVAN,y:5764},   xlsxGreg:'2004-05-22', gcalHeb:{d:2, m:months.SIVAN} },
+  'הודיה שליסל|birthday':         { xlsxHeb:{d:4, m:months.CHESHVAN,y:5768},xlsxGreg:'2007-10-16', gcalHeb:{d:4, m:months.CHESHVAN} },
+  'נעמה שליסל|birthday':          { xlsxHeb:{d:30,m:months.SIVAN,y:5771},   xlsxGreg:'2011-07-01', gcalHeb:{d:30,m:months.SIVAN}, confirmedAfterSunset: true },
+  'אפרת שליסל|birthday':          { xlsxHeb:{d:6, m:months.ADAR_II,y:5760}, xlsxGreg:'2000-03-13', gcalHeb:null },
+  'אפרת וצוריאל שליסל|anniversary':{ xlsxHeb:{d:25,m:months.ADAR_II,y:5784},xlsxGreg:'2024-04-04', gcalHeb:null },
+  'יעלה שליסל|birthday':          { xlsxHeb:{d:27,m:months.CHESHVAN,y:5786},xlsxGreg:'2025-11-18', gcalHeb:null },
+  'יניב נוסרתי|birthday':         { xlsxHeb:{d:17,m:months.TISHREI,y:5736}, xlsxGreg:'1975-09-21', gcalHeb:{d:16,m:months.TISHREI} },
+  'גולדי נוסרתי|birthday':        { xlsxHeb:{d:9, m:months.ELUL,y:5737},    xlsxGreg:'1977-08-23', gcalHeb:{d:9, m:months.ELUL} },
+  'גולדי ויניב נוסרתי|anniversary':{ xlsxHeb:{d:5, m:months.TAMUZ,y:5761},  xlsxGreg:'2001-06-26', gcalHeb:{d:5, m:months.TAMUZ} },
+  'שיראל נוזר|birthday':          { xlsxHeb:{d:29,m:months.ADAR_II,y:5762}, xlsxGreg:'2002-03-12', gcalHeb:{d:29,m:months.ADAR_I}, confirmedAfterSunset: true },
+  'שיראל ורועי נוזר|anniversary': { xlsxHeb:null, xlsxGreg:null, gcalHeb:null },
+  'איתמר נוסרתי|birthday':        { xlsxHeb:{d:9, m:months.NISAN,y:5763},   xlsxGreg:'2003-04-11', gcalHeb:{d:9, m:months.NISAN} },
+  'רות אלישבע ואיתמר נוסרתי|anniversary': { xlsxHeb:null, xlsxGreg:null, gcalHeb:null },
+  'אודליה נוסרתי|birthday':       { xlsxHeb:{d:28,m:months.SHVAT,y:5765},   xlsxGreg:'2005-02-07', gcalHeb:{d:28,m:months.SHVAT} },
+  'אפרת נוסרתי|birthday':         { xlsxHeb:{d:11,m:months.KISLEV,y:5768},  xlsxGreg:'2007-11-21', gcalHeb:{d:11,m:months.KISLEV} },
+  'אמיתי נוסרתי|birthday':        { xlsxHeb:{d:22,m:months.NISAN,y:5771},   xlsxGreg:'2011-04-26', gcalHeb:{d:22,m:months.NISAN} },
+  'אוריה נוסרתי|birthday':        { xlsxHeb:{d:16,m:months.TEVET,y:5776},   xlsxGreg:'2015-12-28', gcalHeb:{d:16,m:months.TEVET} },
+  'יוסף שאול נוסרתי|birthday':    { xlsxHeb:null, xlsxGreg:'2026-05-31', gcalHeb:null },
+  'יצחק שליסל|birthday':          { xlsxHeb:{d:13,m:months.ELUL,y:5738},    xlsxGreg:'1978-09-15', gcalHeb:{d:13,m:months.ELUL} },
+  'איילת שליסל|birthday':         { xlsxHeb:{d:4, m:months.TAMUZ,y:5745},   xlsxGreg:'1985-06-23', gcalHeb:{d:4, m:months.TAMUZ} },
+  'איילת ויצחק שליסל|anniversary':{ xlsxHeb:{d:7, m:months.NISAN,y:5767},   xlsxGreg:'2007-03-26', gcalHeb:{d:7, m:months.NISAN} },
+  'אסתר שליסל|birthday':          { xlsxHeb:{d:5, m:months.ADAR_I,y:5768},  xlsxGreg:'2008-02-11', gcalHeb:{d:5, m:months.ADAR_I} },
+  'הלל שליסל|birthday':           { xlsxHeb:{d:29,m:months.IYYAR,y:5770},   xlsxGreg:'2010-05-13', gcalHeb:{d:29,m:months.IYYAR} },
+  'תחיה שליסל|birthday':          { xlsxHeb:{d:21,m:months.TEVET,y:5773},   xlsxGreg:'2013-01-03', gcalHeb:{d:21,m:months.TEVET} },
+  'גפן שליסל|birthday':           { xlsxHeb:{d:18,m:months.NISAN,y:5775},   xlsxGreg:'2015-04-07', gcalHeb:{d:18,m:months.NISAN} },
+  'תכלת שליסל|birthday':          { xlsxHeb:{d:16,m:months.ELUL,y:5776},    xlsxGreg:'2016-09-19', gcalHeb:{d:16,m:months.ELUL} },
+};
+
+function checkExternalSources(name, type) {
+  const rec = EXTERNAL_VERIFICATION[`${name}|${type}`];
+  if (!rec) return { status: 'none', text: 'לא נבדק', xlsxHeb: null, xlsxGreg: null };
+  const { xlsxHeb, xlsxGreg, gcalHeb, confirmedAfterSunset } = rec;
+  if (!xlsxHeb && !xlsxGreg) return { status: 'none', text: 'אין נתון', xlsxHeb, xlsxGreg };
+  // קובי אישר מול המשפחה: האירוע קרה בפועל אחרי השקיעה — הפער בין העברי
+  // ללועזי-אקסל נובע מכך שהיום העברי כבר התחיל, לא מטעות הזנה. אין כאן באמת סתירה.
+  if (confirmedAfterSunset) return { status: 'ok', text: '✓ (אחרי השקיעה)', xlsxHeb, xlsxGreg };
+  const problems = [];
+  const hebSameMonth = (m1, m2) => m1 === m2 || (m1 === months.ADAR_I && m2 === months.ADAR_II) || (m1 === months.ADAR_II && m2 === months.ADAR_I);
+  let hebFromXlsxGreg = null;
+  if (xlsxGreg) {
+    const [gy, gm, gd] = xlsxGreg.split('-').map(Number);
+    hebFromXlsxGreg = new HDate(new Date(gy, gm - 1, gd));
+  }
+  if (xlsxHeb && hebFromXlsxGreg) {
+    if (xlsxHeb.d !== hebFromXlsxGreg.getDate() || !hebSameMonth(xlsxHeb.m, hebFromXlsxGreg.getMonth())) {
+      problems.push('עברי אקסל ≠ לועזי אקסל');
+    }
+  }
+  if (!gcalHeb) {
+    problems.push('אין אירוע תואם בלוח גוגל');
+  } else {
+    if (xlsxHeb && (xlsxHeb.d !== gcalHeb.d || !hebSameMonth(xlsxHeb.m, gcalHeb.m))) {
+      problems.push('עברי אקסל ≠ עברי לוח גוגל');
+    }
+    if (hebFromXlsxGreg && (hebFromXlsxGreg.getDate() !== gcalHeb.d || !hebSameMonth(hebFromXlsxGreg.getMonth(), gcalHeb.m))) {
+      problems.push('לועזי אקסל ≠ לועזי לוח גוגל');
+    }
+  }
+  if (problems.length === 0) return { status: 'ok', text: '✓', xlsxHeb, xlsxGreg };
+  return { status: 'diff', text: problems.join(', '), xlsxHeb, xlsxGreg };
+}
+
 const EXCLUDED = new Set([
   'שְׁמִירָת בֵּית הַסֵפֶר לְיוֹם הַעֲלִיָּה', 'יוֹם הֶרְצְל',
   'יוֹם זַ׳בּוֹטִינְסְקִי', 'יוֹם בֶּן־גּוּרִיּוֹן', 'יוֹם הַזִּכָּרוֹן לְיִצְחָק רַבִּין',
@@ -328,7 +422,7 @@ const FAMILY_EVENTS = new Map(); // dateKey -> { type, text }[]
       const text = `${line1} ${line2}`;
       const fkey = dateKey(hd.greg());
       if (!FAMILY_EVENTS.has(fkey)) FAMILY_EVENTS.set(fkey, []);
-      FAMILY_EVENTS.get(fkey).push({ type: fd.type, text, line1, line2 });
+      FAMILY_EVENTS.get(fkey).push({ type: fd.type, text, line1, line2, name: fd.name });
     }
   }
 }
@@ -518,6 +612,10 @@ cover.innerHTML = `
 `;
 root.appendChild(cover);
 
+// נאסף תוך כדי בניית התאים בפועל (לא מחושב בנפרד) — כדי שעמוד הסיכום יראה
+// בדיוק את מה שבאמת מוצג בכל תא, בלי סיכון לאי-התאמה בין השניים
+const SUMMARY_ROWS = [];
+
 for (const { m: monthNum, y: year } of MONTHS) {
   const hd1 = new HDate(1, monthNum, year);
   const daysInMonth = hd1.daysInMonth();
@@ -646,6 +744,10 @@ for (const { m: monthNum, y: year } of MONTHS) {
         return `<div class="tag-family">${icon}<span>${fe.text}</span></div>`;
       }).join('');
 
+    for (const fe of (FAMILY_EVENTS.get(key) ?? [])) {
+      SUMMARY_ROWS.push({ type: fe.type, name: fe.name, text: fe.text, hd, greg, check: checkExternalSources(fe.name, fe.type) });
+    }
+
     const ft = FAST_TIMES.get(key);
     const ftKinds = ft ? ['fast_start', 'fast_end', 'achilasChametz', 'biurChametz'].filter(k => ft[k]?.length) : [];
     // אם גם הדלקת נרות חלה באותו יום (למשל ערב פסח + תענית בכורות), משלבים אותה
@@ -720,6 +822,57 @@ for (const { m: monthNum, y: year } of MONTHS) {
   root.appendChild(page);
 }
 
+// עמוד סיכום אירועי משפחה — בין השער לחודש הראשון. נבנה מ-SUMMARY_ROWS,
+// שנאסף תוך כדי בניית התאים בפועל (לא מחושב מחדש בנפרד), כדי שיישאר
+// תואם ב-100% למה שבאמת מוצג בכל תא, בלי סיכון לאי-התאמה בין השניים.
+SUMMARY_ROWS.sort((a, b) => a.greg - b.greg);
+
+// בטבלה בלבד (לא בלוח עצמו!) מדלגים על ההופעה השנייה של אירועים שחוזרים
+// פעמיים בטווח (אלול/תשרי, כי הלוח כולל את שני הקצוות) — אך ורק אם ההערה
+// באותו אירוע כבר מופיעה גם בהופעה שבתוך השנה העברית המרכזית (תשפ"ז).
+const TABLE_ROWS = SUMMARY_ROWS.filter(r => {
+  const y = r.hd.getFullYear();
+  const isBookendYear = y === START.y || y === END.y;
+  if (!isBookendYear) return true;
+  const sibling = SUMMARY_ROWS.find(s => s !== r && s.name === r.name && s.type === r.type
+    && s.hd.getFullYear() !== START.y && s.hd.getFullYear() !== END.y);
+  return !(sibling && sibling.check.text === r.check.text);
+});
+
+// עמודות "מקורי" — מהאקסל בלבד (EXTERNAL_VERIFICATION), לא מהקוד/FAMILY_DATES,
+// כדי שישקפו בדיוק את מה שנבדק בעמודת ההערה (אקסל מול לוח גוגל).
+const fmtGregIso = (iso) => {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric', year: 'numeric' });
+};
+const summaryRowHtml = (r) => `
+  <tr>
+    <td class="ev">${r.text}</td>
+    <td class="heb-date">${r.check.xlsxHeb ? new HDate(r.check.xlsxHeb.d, r.check.xlsxHeb.m, r.check.xlsxHeb.y).renderGematriya() : '—'}</td>
+    <td class="greg-date">${r.check.xlsxGreg ? fmtGregIso(r.check.xlsxGreg) : '—'}</td>
+    <td class="note note-${r.check.status}">${r.check.text}</td>
+  </tr>`;
+const summaryTableHtml = (rows) => `
+  <table class="summary-table">
+    <colgroup><col style="width:38%"><col style="width:18%"><col style="width:12%"><col style="width:32%"></colgroup>
+    <thead><tr><th>אירוע</th><th>עברי</th><th>לועזי</th><th>הערה (אקסל מול לוח גוגל)</th></tr></thead>
+    <tbody>${rows.map(summaryRowHtml).join('')}</tbody>
+  </table>`;
+
+const summaryPage = document.createElement('div');
+summaryPage.className = 'page summary-page';
+const summaryHalf = Math.ceil(TABLE_ROWS.length / 2);
+summaryPage.innerHTML = `
+  <div class="month-head">
+    <div class="heb">כל אירועי המשפחה בלוח</div>
+    <div class="greg">${TABLE_ROWS.length} אירועים, לפי סדר הופעתם בלוח</div>
+  </div>
+  <div class="summary-tables">
+    ${summaryTableHtml(TABLE_ROWS.slice(0, summaryHalf))}
+    ${summaryTableHtml(TABLE_ROWS.slice(summaryHalf))}
+  </div>
+`;
+root.insertBefore(summaryPage, root.children[1]);
 </script>
 </body>
 </html>
