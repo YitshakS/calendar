@@ -214,41 +214,41 @@ const FAMILY_DATES = [
 
   // ענף שליסל יוסף ואסתר (סבא-רבא וסבתא-רבא, צד אבא)
   { name: 'יוסף חיים שליסל ז"ל',    relation: 'סבא', type: 'yahrzeit', day: 26, m: months.SIVAN, year: 5767, greg: '2007-06-12' },
-  { name: 'אסתר שליסל ז"ל',         relation: 'סבתא', type: 'yahrzeit', day: 6,  m: months.SHVAT, year: 5760, greg: '2000-01-12' },
+  { name: 'אסתר שליסל ז"ל',         relation: 'סבתא', type: 'yahrzeit', day: 6,  m: months.SHVAT, year: 5760, greg: '2000-01-12', afterSunset:true },
   { name: 'לאונרד שליסל ז"ל',       type: 'yahrzeit', day: 17, m: months.SHVAT, year: 5718, greg: '1958-02-07' },
 
   // ענף שליסל גדליה ובת ציון (סבא וסבתא)
-  { name: 'בת ציון שליסל',          type: 'birthday', day: 28, m: months.ELUL,     year: 5702, greg: '1942-09-10' },
+  { name: 'בת ציון שליסל',          type: 'birthday', day: 28, m: months.ELUL,     year: 5702, greg: '1942-09-10', note:['באקסל כתוב 8.9.1942'] },
   { name: 'גדליה שליסל',            type: 'birthday', day: 6,  m: months.TISHREI,  year: 5703, greg: '1942-09-17' },
   { name: 'בת ציון וגדליה שליסל',   type: 'anniversary', day: 25, m: months.ELUL,  year: 5734, greg: '1974-09-12' },
 
   // ענף שליסל קובי ואורלי (הבן הבכור)
   { name: 'קובי שליסל',             type: 'birthday', day: 24, m: months.ELUL,     year: 5735, greg: '1975-08-31' },
   { name: 'אורלי שליסל',            type: 'birthday', day: 8,  m: months.NISAN,    year: 5738, greg: '1978-04-15' },
-  { name: 'אורלי וקובי שליסל',      type: 'anniversary', day: 26, m: months.SHVAT, year: 5759, greg: '1999-02-11' },
+  { name: 'אורלי וקובי שליסל',      type: 'anniversary', day: 26, m: months.SHVAT, year: 5759, greg: '1999-02-11', afterSunset:true },
   { name: 'צוריאל שליסל',           type: 'birthday', day: 24, m: months.SIVAN,    year: 5761, greg: '2001-06-15' },
   { name: 'יונתן שליסל',            type: 'birthday', day: 2,  m: months.SIVAN,    year: 5764, greg: '2004-05-22' },
   { name: 'הודיה שליסל',            type: 'birthday', day: 4,  m: months.CHESHVAN, year: 5768, greg: '2007-10-16' },
-  { name: 'נעמה שליסל',             type: 'birthday', day: 30, m: months.SIVAN,    year: 5771, greg: '2011-07-01' },
-  { name: 'אפרת שליסל',             type: 'birthday', day: 6,  m: months.ADAR_II,  year: 5760, greg: '2000-03-13' },
-  { name: 'אפרת וצוריאל שליסל',     type: 'anniversary', day: 25, m: months.ADAR_II, year: 5784, greg: '2024-04-04' },
-  { name: 'יעלה שליסל',             type: 'birthday', day: 27, m: months.CHESHVAN, year: 5786, greg: '2025-11-18' },
+  { name: 'נעמה שליסל',             type: 'birthday', day: 30, m: months.SIVAN,    year: 5771, greg: '2011-07-01', afterSunset:true },
+  { name: 'אפרת שליסל',             type: 'birthday', day: 6,  m: months.ADAR_II,  year: 5760, greg: '2000-03-13', note:['אין אירוע תואם בלוח גוגל'] },
+  { name: 'אפרת וצוריאל שליסל',     type: 'anniversary', day: 25, m: months.ADAR_II, year: 5784, greg: '2024-04-04', note:['אין אירוע תואם בלוח גוגל'] },
+  { name: 'יעלה שליסל',             type: 'birthday', day: 27, m: months.CHESHVAN, year: 5786, greg: '2025-11-18', note:['אין אירוע תואם בלוח גוגל'] },
 
   // ענף נוסרתי גולדי ויניב (הבת האמצעית)
-  { name: 'יניב נוסרתי',            type: 'birthday', day: 16, m: months.TISHREI,  year: 5736, greg: '1975-09-21' },
+  { name: 'יניב נוסרתי',            type: 'birthday', day: 16, m: months.TISHREI,  year: 5736, greg: '1975-09-21', note:['באקסל כתוב י״ז בתשרי'] },
   { name: 'גולדי נוסרתי',           type: 'birthday', day: 9,  m: months.ELUL,     year: 5737, greg: '1977-08-23' },
   { name: 'גולדי ויניב נוסרתי',     type: 'anniversary', day: 5,  m: months.TAMUZ, year: 5761, greg: '2001-06-26' },
-  { name: 'שיראל נוזר',             type: 'birthday', day: 29, m: months.ADAR_I,   year: 5762, greg: '2002-03-12' },
-  { name: 'רועי נוזר',              type: 'birthday', day: 15, m: months.SIVAN,    year: 5761, greg: '2001-06-05' },
-  { name: 'שיראל ורועי נוזר',       type: 'anniversary', day: 10, m: months.ELUL, year: 5786, greg: '2026-08-23' },
+  { name: 'שיראל נוזר',             type: 'birthday', day: 29, m: months.ADAR_I,   year: 5762, greg: '2002-03-12', afterSunset:true },
+  { name: 'רועי נוזר',              type: 'birthday', day: 15, m: months.SIVAN,    year: 5761, greg: '2001-06-05', afterSunset:true, note:['באקסל אין תאריך', 'אין אירוע תואם בלוח גוגל'] },
+  { name: 'שיראל ורועי נוזר',       type: 'anniversary', day: 10, m: months.ELUL, year: 5786, greg: '2026-08-23', note:['באקסל אין תאריך', 'אין אירוע תואם בלוח גוגל'] },
   { name: 'איתמר נוסרתי',           type: 'birthday', day: 9,  m: months.NISAN,    year: 5763, greg: '2003-04-11' },
-  { name: 'רות אלישבע נוסרתי',      type: 'birthday', day: 8,  m: months.TEVET,    year: 5764, greg: '2004-01-01' },
-  { name: 'רות אלישבע ואיתמר נוסרתי', type: 'anniversary', day: 15, m: months.SIVAN,  year: 5785, greg: '2025-06-11' },
+  { name: 'רות אלישבע נוסרתי',      type: 'birthday', day: 8,  m: months.TEVET,    year: 5764, greg: '2004-01-01', afterSunset:true, note:['באקסל אין תאריך', 'אין אירוע תואם בלוח גוגל'] },
+  { name: 'רות אלישבע ואיתמר נוסרתי', type: 'anniversary', day: 15, m: months.SIVAN,  year: 5785, greg: '2025-06-11', note:['באקסל אין תאריך', 'אין אירוע תואם בלוח גוגל'] },
   { name: 'אודליה נוסרתי',          type: 'birthday', day: 28, m: months.SHVAT,    year: 5765, greg: '2005-02-07' },
   { name: 'אפרת נוסרתי',            type: 'birthday', day: 11, m: months.KISLEV,   year: 5768, greg: '2007-11-21' },
   { name: 'אמיתי נוסרתי',           type: 'birthday', day: 22, m: months.NISAN,    year: 5771, greg: '2011-04-26' },
   { name: 'אוריה נוסרתי',           type: 'birthday', day: 16, m: months.TEVET,    year: 5776, greg: '2015-12-28' },
-  { name: 'יוסף שאול נוסרתי',       type: 'birthday', day: 15, m: months.SIVAN,    year: 5786, greg: '2026-05-31' },
+  { name: 'יוסף שאול נוסרתי',       type: 'birthday', day: 7,  m: months.SIVAN,    year: 5786, greg: '2026-05-23', note:['באקסל אין תאריך עברי', 'באקסל כתוב 31.5.2026', 'אין אירוע תואם בלוח גוגל'] },
 
   // ענף שליסל יצחק ואיילת (הבן הצעיר)
   { name: 'יצחק שליסל',            type: 'birthday', day: 13, m: months.ELUL,     year: 5738, greg: '1978-09-15' },
@@ -273,110 +273,12 @@ const FAMILY_DATES = [
   { name: 'יוסף ואסתר שליסל ז"ל',   type: 'anniversary', hidden: true }, // אין תאריך באקסל
 ];
 
-// ── אימות חיצוני (לצורך בקרה בלבד — לא קשור לשום שדה מעל) ──────────────
-// לכל אירוע: מה שרשום בפועל בקובץ האקסל (עברי + לועזי, כפי שהוקלדו שם)
-// ומה שרשום בפועל בלוח "לוח משפחתי" בגוגל (התיוג העברי של האירוע החוזר).
-// נאסף ידנית ע"י בדיקה ישירה של שני המקורות (לא מחושב מהקוד של הלוח עצמו).
-// xlsxHeb/xlsxGreg: null אם האקסל לא נתן את השדה הזה בכלל.
-// gcalHeb: null אם אין בלוח גוגל אירוע מתאים בכלל (טרם נוסף).
-const EXTERNAL_VERIFICATION = {
-  'יצחק גרטנר ז"ל|yahrzeit':      { xlsxHeb:{d:13,m:months.SIVAN,y:5718},   xlsxGreg:'1958-06-01', gcalHeb:{d:13,m:months.SIVAN} },
-  'אסתר רבקה גרטנר ז"ל|yahrzeit': { xlsxHeb:{d:25,m:months.TAMUZ,y:5750},   xlsxGreg:'1990-07-18', gcalHeb:{d:25,m:months.TAMUZ} },
-  'יוסף חיים שליסל ז"ל|yahrzeit': { xlsxHeb:{d:26,m:months.SIVAN,y:5767},   xlsxGreg:'2007-06-12', gcalHeb:{d:26,m:months.SIVAN} },
-  'לאונרד שליסל ז"ל|yahrzeit':    { xlsxHeb:{d:17,m:months.SHVAT,y:5718},   xlsxGreg:'1958-02-07', gcalHeb:{d:17,m:months.SHVAT} },
-  'אסתר שליסל ז"ל|yahrzeit':      { xlsxHeb:{d:6, m:months.SHVAT,y:5760},   xlsxGreg:'2000-01-12', gcalHeb:{d:6, m:months.SHVAT}, confirmedAfterSunset: true },
-  'בת ציון שליסל|birthday':       { xlsxHeb:{d:28,m:months.ELUL,y:5702},    xlsxGreg:'1942-09-08', gcalHeb:{d:28,m:months.ELUL} },
-  'גדליה שליסל|birthday':         { xlsxHeb:{d:6, m:months.TISHREI,y:5703}, xlsxGreg:'1942-09-17', gcalHeb:{d:6, m:months.TISHREI} },
-  'בת ציון וגדליה שליסל|anniversary': { xlsxHeb:{d:25,m:months.ELUL,y:5734}, xlsxGreg:'1974-09-12', gcalHeb:{d:25,m:months.ELUL} },
-  'קובי שליסל|birthday':          { xlsxHeb:{d:24,m:months.ELUL,y:5735},    xlsxGreg:'1975-08-31', gcalHeb:{d:24,m:months.ELUL} },
-  'אורלי שליסל|birthday':         { xlsxHeb:{d:8, m:months.NISAN,y:5738},   xlsxGreg:'1978-04-15', gcalHeb:{d:8, m:months.NISAN} },
-  'אורלי וקובי שליסל|anniversary':{ xlsxHeb:{d:26,m:months.SHVAT,y:5759},   xlsxGreg:'1999-02-11', gcalHeb:{d:26,m:months.SHVAT}, confirmedAfterSunset: true },
-  'צוריאל שליסל|birthday':        { xlsxHeb:{d:24,m:months.SIVAN,y:5761},   xlsxGreg:'2001-06-15', gcalHeb:{d:24,m:months.SIVAN} },
-  'יונתן שליסל|birthday':         { xlsxHeb:{d:2, m:months.SIVAN,y:5764},   xlsxGreg:'2004-05-22', gcalHeb:{d:2, m:months.SIVAN} },
-  'הודיה שליסל|birthday':         { xlsxHeb:{d:4, m:months.CHESHVAN,y:5768},xlsxGreg:'2007-10-16', gcalHeb:{d:4, m:months.CHESHVAN} },
-  'נעמה שליסל|birthday':          { xlsxHeb:{d:30,m:months.SIVAN,y:5771},   xlsxGreg:'2011-07-01', gcalHeb:{d:30,m:months.SIVAN}, confirmedAfterSunset: true },
-  'אפרת שליסל|birthday':          { xlsxHeb:{d:6, m:months.ADAR_II,y:5760}, xlsxGreg:'2000-03-13', gcalHeb:null },
-  'אפרת וצוריאל שליסל|anniversary':{ xlsxHeb:{d:25,m:months.ADAR_II,y:5784},xlsxGreg:'2024-04-04', gcalHeb:null },
-  'יעלה שליסל|birthday':          { xlsxHeb:{d:27,m:months.CHESHVAN,y:5786},xlsxGreg:'2025-11-18', gcalHeb:null },
-  // באקסל (עמודת "יום עברי") רשום 17; לוח גוגל ופתק גולדי נותנים 16 — הפער הוא בדיוק
-  // גבול השקיעה (17=אחרי, 16=לפני), ללא אישור משפחתי לכיוון. מציגים כאן 16 ומסמנים בהערה
-  'יניב נוסרתי|birthday':         { xlsxHeb:{d:16,m:months.TISHREI,y:5736}, xlsxGreg:'1975-09-21', gcalHeb:{d:16,m:months.TISHREI}, xlsxManualHeb:{d:17,m:months.TISHREI} },
-  'גולדי נוסרתי|birthday':        { xlsxHeb:{d:9, m:months.ELUL,y:5737},    xlsxGreg:'1977-08-23', gcalHeb:{d:9, m:months.ELUL} },
-  'גולדי ויניב נוסרתי|anniversary':{ xlsxHeb:{d:5, m:months.TAMUZ,y:5761},  xlsxGreg:'2001-06-26', gcalHeb:{d:5, m:months.TAMUZ} },
-  'שיראל נוזר|birthday':          { xlsxHeb:{d:29,m:months.ADAR_II,y:5762}, xlsxGreg:'2002-03-12', gcalHeb:{d:29,m:months.ADAR_I}, confirmedAfterSunset: true },
-  // רועי לא היה באקסל בכלל — התאריך כאן מהפתק של גולדי (לא מהקובץ עצמו), אין אירוע בלוח גוגל
-  'רועי נוזר|birthday':           { xlsxHeb:{d:15,m:months.SIVAN,y:5761},   xlsxGreg:'2001-06-05', gcalHeb:null, confirmedAfterSunset: true, xlsxMissing: true },
-  // אין שורת אקסל לנישואין הזה — התאריך כאן מהפתק של גולדי, אין אירוע בלוח גוגל
-  'שיראל ורועי נוזר|anniversary': { xlsxHeb:{d:10,m:months.ELUL,y:5786},  xlsxGreg:'2026-08-23', gcalHeb:null, xlsxMissing: true },
-  'איתמר נוסרתי|birthday':        { xlsxHeb:{d:9, m:months.NISAN,y:5763},   xlsxGreg:'2003-04-11', gcalHeb:{d:9, m:months.NISAN} },
-  // ברשימת האקסל היא מופיעה בתור "רותי נוסרתי (?)" בלי שום תאריך; התאריך כאן
-  // מהפתק של גולדי (לא מהקובץ עצמו). אין אירוע בלוח גוגל
-  'רות אלישבע נוסרתי|birthday':   { xlsxHeb:{d:8, m:months.TEVET,y:5764},   xlsxGreg:'2004-01-01', gcalHeb:null, confirmedAfterSunset: true, xlsxMissing: true },
-  // אין שורת אקסל לנישואין הזה — התאריך כאן מהפתק של גולדי, אין אירוע בלוח גוגל
-  'רות אלישבע ואיתמר נוסרתי|anniversary': { xlsxHeb:{d:15,m:months.SIVAN,y:5785}, xlsxGreg:'2025-06-11', gcalHeb:null, xlsxMissing: true },
-  'אודליה נוסרתי|birthday':       { xlsxHeb:{d:28,m:months.SHVAT,y:5765},   xlsxGreg:'2005-02-07', gcalHeb:{d:28,m:months.SHVAT} },
-  'אפרת נוסרתי|birthday':         { xlsxHeb:{d:11,m:months.KISLEV,y:5768},  xlsxGreg:'2007-11-21', gcalHeb:{d:11,m:months.KISLEV} },
-  'אמיתי נוסרתי|birthday':        { xlsxHeb:{d:22,m:months.NISAN,y:5771},   xlsxGreg:'2011-04-26', gcalHeb:{d:22,m:months.NISAN} },
-  'אוריה נוסרתי|birthday':        { xlsxHeb:{d:16,m:months.TEVET,y:5776},   xlsxGreg:'2015-12-28', gcalHeb:{d:16,m:months.TEVET} },
-  // באקסל רשום רק לועזי 31.5.2026 (בלי עברי בנפרד); גולדי הביאה ז' סיוון תשפ"ו,
-  // 23.5.2026 — פער של 8 ימים, לא אפקט שקיעה. מציגים כאן את תאריך גולדי ומסמנים בהערה
-  'יוסף שאול נוסרתי|birthday':    { xlsxHeb:{d:7,m:months.SIVAN,y:5786}, xlsxGreg:'2026-05-23', gcalHeb:null, xlsxConflictGreg:'2026-05-31' },
-  'יצחק שליסל|birthday':          { xlsxHeb:{d:13,m:months.ELUL,y:5738},    xlsxGreg:'1978-09-15', gcalHeb:{d:13,m:months.ELUL} },
-  'איילת שליסל|birthday':         { xlsxHeb:{d:4, m:months.TAMUZ,y:5745},   xlsxGreg:'1985-06-23', gcalHeb:{d:4, m:months.TAMUZ} },
-  'איילת ויצחק שליסל|anniversary':{ xlsxHeb:{d:7, m:months.NISAN,y:5767},   xlsxGreg:'2007-03-26', gcalHeb:{d:7, m:months.NISAN} },
-  'אסתר שליסל|birthday':          { xlsxHeb:{d:5, m:months.ADAR_I,y:5768},  xlsxGreg:'2008-02-11', gcalHeb:{d:5, m:months.ADAR_I} },
-  'הלל שליסל|birthday':           { xlsxHeb:{d:29,m:months.IYYAR,y:5770},   xlsxGreg:'2010-05-13', gcalHeb:{d:29,m:months.IYYAR} },
-  'תחיה שליסל|birthday':          { xlsxHeb:{d:21,m:months.TEVET,y:5773},   xlsxGreg:'2013-01-03', gcalHeb:{d:21,m:months.TEVET} },
-  'גפן שליסל|birthday':           { xlsxHeb:{d:18,m:months.NISAN,y:5775},   xlsxGreg:'2015-04-07', gcalHeb:{d:18,m:months.NISAN} },
-  'תכלת שליסל|birthday':          { xlsxHeb:{d:16,m:months.ELUL,y:5776},    xlsxGreg:'2016-09-19', gcalHeb:{d:16,m:months.ELUL} },
-};
-
-function checkExternalSources(name, type) {
-  const rec = EXTERNAL_VERIFICATION[`${name}|${type}`];
-  if (!rec) return { status: 'none', parts: [{ text: 'לא נבדק', ok: null }], xlsxHeb: null, xlsxGreg: null };
-  const { xlsxHeb, xlsxGreg, gcalHeb, confirmedAfterSunset, xlsxMissing, xlsxConflictGreg, xlsxManualHeb } = rec;
-  if (!xlsxHeb && !xlsxGreg) return { status: 'none', parts: [{ text: 'אין נתון', ok: null }], xlsxHeb, xlsxGreg };
-  // problems: {text, ok} — ok:true מוצג בעיצוב "תקין" (ירוק) תמיד, גם כשיש עוד הערות באותה שורה
-  const problems = [];
-  // קובי/גולדי אישרו מול המשפחה: האירוע קרה בפועל אחרי השקיעה — הפער בין העברי
-  // ללועזי-אקסל נובע מכך שהיום העברי כבר התחיל, לא מטעות הזנה. לכן ההערה הזו
-  // תמיד בעיצוב "תקין", גם כששאר ההערות (למשל אין אירוע בלוח גוגל) עדיין מוצגות.
-  if (confirmedAfterSunset) problems.push({ text: '✓ (אחרי השקיעה)', ok: true });
-  // xlsxMissing: התאריך בעמודות "עברי"/"לועזי" מקורו בפתק של גולדי, לא באקסל —
-  // באקסל לשורה הזו אין שום תאריך, אז אין מה להשוות אליו
-  if (xlsxMissing) problems.push({ text: 'אין תאריך באקסל', ok: false });
-  // xlsxConflictGreg: באקסל כן יש תאריך לועזי, אבל הוא סותר את התאריך של גולדי
-  // (פער של כמה ימים, לא אפקט שקיעה של יום אחד) — מציגים את תאריך גולדי ומסמנים את הסתירה
-  if (xlsxConflictGreg) problems.push({ text: 'לועזי פתק גולדי ≠ לועזי אקסל', ok: false });
-  const hebSameMonth = (m1, m2) => m1 === m2 || (m1 === months.ADAR_I && m2 === months.ADAR_II) || (m1 === months.ADAR_II && m2 === months.ADAR_I);
-  // xlsxManualHeb: הערך שרשום בפועל בעמודת "יום עברי" באקסל (לא עמודות הבדיקה/חישוב
-  // של הגיליון עצמו, שאינן מקור) שונה מהעברי שמוצג כאן (שמקורו בפתק גולדי, התואם ללוח גוגל)
-  if (xlsxManualHeb && xlsxHeb && (xlsxManualHeb.d !== xlsxHeb.d || !hebSameMonth(xlsxManualHeb.m, xlsxHeb.m))) {
-    problems.push({ text: 'עברי פתק גולדי ≠ עברי אקסל', ok: false });
-  }
-  let hebFromXlsxGreg = null;
-  if (xlsxGreg) {
-    const [gy, gm, gd] = xlsxGreg.split('-').map(Number);
-    hebFromXlsxGreg = new HDate(new Date(gy, gm - 1, gd));
-  }
-  if (!confirmedAfterSunset && xlsxHeb && hebFromXlsxGreg) {
-    if (xlsxHeb.d !== hebFromXlsxGreg.getDate() || !hebSameMonth(xlsxHeb.m, hebFromXlsxGreg.getMonth())) {
-      problems.push({ text: 'עברי אקסל ≠ לועזי אקסל', ok: false });
-    }
-  }
-  if (!gcalHeb) {
-    problems.push({ text: 'אין אירוע תואם בלוח גוגל', ok: false });
-  } else {
-    if (xlsxHeb && (xlsxHeb.d !== gcalHeb.d || !hebSameMonth(xlsxHeb.m, gcalHeb.m))) {
-      problems.push({ text: 'עברי אקסל ≠ עברי לוח גוגל', ok: false });
-    }
-    if (!confirmedAfterSunset && hebFromXlsxGreg && (hebFromXlsxGreg.getDate() !== gcalHeb.d || !hebSameMonth(hebFromXlsxGreg.getMonth(), gcalHeb.m))) {
-      problems.push({ text: 'לועזי אקסל ≠ לועזי לוח גוגל', ok: false });
-    }
-  }
-  if (problems.length === 0) return { status: 'ok', parts: [{ text: '✓', ok: true }], xlsxHeb, xlsxGreg };
-  const status = problems.every(p => p.ok) ? 'ok' : 'diff';
-  return { status, parts: problems, xlsxHeb, xlsxGreg };
+// afterSunset: האירוע אושר כמתרחש אחרי השקיעה (ולכן היום העברי כבר התקדם).
+// note: הערת אימות — רק במקרים שמקור חיצוני חולק על מה שרשום בשורה.
+// מחרוזת שמתחילה ב-✓ מוצגת כתקינה; כל שאר המחרוזות כחריגה.
+function verificationNote(fd) {
+  const texts = [...(fd.afterSunset ? ['✓ (אחרי השקיעה)'] : []), ...(fd.note ?? [])];
+  return (texts.length ? texts : ['✓']).map(text => ({ text, ok: text.startsWith('✓') }));
 }
 
 const EXCLUDED = new Set([
@@ -448,7 +350,7 @@ const FAMILY_EVENTS = new Map(); // dateKey -> { type, text }[]
       const text = `${line1} ${line2}`;
       const fkey = dateKey(hd.greg());
       if (!FAMILY_EVENTS.has(fkey)) FAMILY_EVENTS.set(fkey, []);
-      FAMILY_EVENTS.get(fkey).push({ type: fd.type, text, line1, line2, name: fd.name });
+      FAMILY_EVENTS.get(fkey).push({ type: fd.type, text, line1, line2, name: fd.name, orig: fd });
     }
   }
 }
@@ -771,7 +673,7 @@ for (const { m: monthNum, y: year } of MONTHS) {
       }).join('');
 
     for (const fe of (FAMILY_EVENTS.get(key) ?? [])) {
-      SUMMARY_ROWS.push({ type: fe.type, name: fe.name, text: fe.text, hd, greg, check: checkExternalSources(fe.name, fe.type) });
+      SUMMARY_ROWS.push({ type: fe.type, name: fe.name, text: fe.text, hd, greg, orig: fe.orig, note: verificationNote(fe.orig) });
     }
 
     const ft = FAST_TIMES.get(key);
@@ -862,12 +764,11 @@ const TABLE_ROWS = SUMMARY_ROWS.filter(r => {
   if (!isBookendYear) return true;
   const sibling = SUMMARY_ROWS.find(s => s !== r && s.name === r.name && s.type === r.type
     && s.hd.getFullYear() !== START.y && s.hd.getFullYear() !== END.y);
-  const partsKey = (c) => c.parts.map(p => p.text).join('|');
-  return !(sibling && partsKey(sibling.check) === partsKey(r.check));
+  const noteKey = (row) => row.note.map(p => p.text).join('|');
+  return !(sibling && noteKey(sibling) === noteKey(r));
 });
 
-// עמודות "מקורי" — מהאקסל בלבד (EXTERNAL_VERIFICATION), לא מהקוד/FAMILY_DATES,
-// כדי שישקפו בדיוק את מה שנבדק בעמודת ההערה (אקסל מול לוח גוגל).
+// עמודות התאריך בטבלה — מ-FAMILY_DATES, אותו מקור שממנו נבנה הלוח עצמו.
 const fmtGregIso = (iso) => {
   const [y, m, d] = iso.split('-').map(Number);
   return new Date(y, m - 1, d).toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric', year: 'numeric' });
@@ -875,9 +776,9 @@ const fmtGregIso = (iso) => {
 const summaryRowHtml = (r) => `
   <tr>
     <td class="ev">${r.text}</td>
-    <td class="heb-date">${r.check.xlsxHeb ? new HDate(r.check.xlsxHeb.d, r.check.xlsxHeb.m, r.check.xlsxHeb.y).renderGematriya() : '—'}</td>
-    <td class="greg-date">${r.check.xlsxGreg ? fmtGregIso(r.check.xlsxGreg) : '—'}</td>
-    <td class="note">${r.check.parts.map(p => `<span class="note-part note-${p.ok === true ? 'ok' : p.ok === false ? 'diff' : 'none'}">${p.text}</span>`).join('<span class="note-sep">, </span>')}</td>
+    <td class="heb-date">${new HDate(r.orig.day, r.orig.m, r.orig.year).renderGematriya()}</td>
+    <td class="greg-date">${fmtGregIso(r.orig.greg)}</td>
+    <td class="note">${r.note.map(p => `<span class="note-part note-${p.ok ? 'ok' : 'diff'}">${p.text}</span>`).join('<span class="note-sep">, </span>')}</td>
   </tr>`;
 const summaryTableHtml = (rows) => `
   <table class="summary-table">
