@@ -273,12 +273,14 @@ const FAMILY_DATES = [
   { name: 'יוסף ואסתר שליסל ז"ל',   type: 'anniversary', hidden: true }, // אין תאריך באקסל
 ];
 
-// afterSunset: האירוע אושר כמתרחש אחרי השקיעה (ולכן היום העברי כבר התקדם).
-// note: הערת אימות — רק במקרים שמקור חיצוני חולק על מה שרשום בשורה.
-// מחרוזת שמתחילה ב-✓ מוצגת כתקינה; כל שאר המחרוזות כחריגה.
+// afterSunset: האירוע אושר כמתרחש אחרי השקיעה (ולכן היום העברי כבר התקדם) —
+//              הסבר, ולכן מוצג כתקין. note: סתירה מול מקור חיצוני, מוצגת כחריגה.
+// שורה בלי שניהם — אין לה הערה, והתא נשאר ריק.
 function verificationNote(fd) {
-  const texts = [...(fd.afterSunset ? ['✓ העברי לפי האירוע, שהתרחש אחרי השקיעה'] : []), ...(fd.note ?? [])];
-  return (texts.length ? texts : ['✓']).map(text => ({ text, ok: text.startsWith('✓') }));
+  return [
+    ...(fd.afterSunset ? [{ text: 'העברי לפי האירוע, שהתרחש אחרי השקיעה', ok: true }] : []),
+    ...(fd.note ?? []).map(text => ({ text, ok: false })),
+  ];
 }
 
 const EXCLUDED = new Set([
@@ -782,7 +784,7 @@ const summaryRowHtml = (r) => `
   </tr>`;
 const summaryTableHtml = (rows) => `
   <table class="summary-table">
-    <colgroup><col style="width:38%"><col style="width:18%"><col style="width:12%"><col style="width:32%"></colgroup>
+    <colgroup><col style="width:34%"><col style="width:18%"><col style="width:12%"><col style="width:36%"></colgroup>
     <thead><tr><th>אירוע</th><th>עברי</th><th>לועזי</th><th>הערות</th></tr></thead>
     <tbody>${rows.map(summaryRowHtml).join('')}</tbody>
   </table>`;
