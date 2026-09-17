@@ -771,9 +771,10 @@ const TABLE_ROWS = SUMMARY_ROWS.filter(r => {
 });
 
 // עמודות התאריך בטבלה — מ-FAMILY_DATES, אותו מקור שממנו נבנה הלוח עצמו.
+// מהמחרוזת עצמה (YYYY-MM-DD), בלי מעבר דרך Date — כדי שאזור זמן לא יזיז תאריך
 const fmtGregIso = (iso) => {
-  const [y, m, d] = iso.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric', year: 'numeric' });
+  const [y, m, d] = iso.split('-');
+  return `${d}.${m}.${y}`;
 };
 const summaryRowHtml = (r) => `
   <tr>
