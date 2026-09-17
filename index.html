@@ -783,7 +783,7 @@ const summaryRowHtml = (r) => `
 const summaryTableHtml = (rows) => `
   <table class="summary-table">
     <colgroup><col style="width:38%"><col style="width:18%"><col style="width:12%"><col style="width:32%"></colgroup>
-    <thead><tr><th>אירוע</th><th>עברי</th><th>לועזי</th><th>הערה (אקסל מול לוח גוגל)</th></tr></thead>
+    <thead><tr><th>אירוע</th><th>עברי</th><th>לועזי</th><th>הערות</th></tr></thead>
     <tbody>${rows.map(summaryRowHtml).join('')}</tbody>
   </table>`;
 
