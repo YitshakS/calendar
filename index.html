@@ -152,7 +152,7 @@
 <div id="pages"></div>
 
 <script type="module">
-import { HDate, HebrewCalendar, Location, flags, months, gematriya } from 'https://esm.sh/@hebcal/core@6.5.3';
+import { HDate, HebrewCalendar, Location, Locale, flags, months, gematriya } from 'https://esm.sh/@hebcal/core@6.5.3';
 
 const JERUSALEM = new Location(31.7683, 35.2137, true, 'Asia/Jerusalem', 'ירושלים', 'IL', undefined, 754);
 
@@ -776,16 +776,20 @@ const fmtGregIso = (iso) => {
   const [y, m, d] = iso.split('-');
   return `${d}.${m}.${y}`;
 };
+// כמו renderGematriya של הספרייה, אבל עם בי״ת לפני שם החודש ("ו׳ בתִּשְׁרֵי תש״ג").
+// מורכב מחלקי הספרייה עצמה — בלי לפרק את המחרוזת שהיא מחזירה.
+const fmtHeb = (hd) =>
+  `${gematriya(hd.getDate())} ב${Locale.gettext(hd.getMonthName(), 'he')} ${gematriya(hd.getFullYear())}`;
 const summaryRowHtml = (r) => `
   <tr>
     <td class="ev">${r.text}</td>
-    <td class="heb-date">${new HDate(r.orig.day, r.orig.m, r.orig.year).renderGematriya()}</td>
+    <td class="heb-date">${fmtHeb(new HDate(r.orig.day, r.orig.m, r.orig.year))}</td>
     <td class="greg-date">${fmtGregIso(r.orig.greg)}</td>
     <td class="note">${r.note.map(p => `<span class="note-part note-${p.ok ? 'ok' : 'diff'}">${p.text}</span>`).join('<span class="note-sep">, </span>')}</td>
   </tr>`;
 const summaryTableHtml = (rows) => `
   <table class="summary-table">
-    <colgroup><col style="width:34%"><col style="width:18%"><col style="width:12%"><col style="width:36%"></colgroup>
+    <colgroup><col style="width:33%"><col style="width:19%"><col style="width:12%"><col style="width:36%"></colgroup>
     <thead><tr><th>אירוע</th><th>עברי</th><th>לועזי</th><th>הערות</th></tr></thead>
     <tbody>${rows.map(summaryRowHtml).join('')}</tbody>
   </table>`;
