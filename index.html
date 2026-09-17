@@ -277,7 +277,7 @@ const FAMILY_DATES = [
 // note: הערת אימות — רק במקרים שמקור חיצוני חולק על מה שרשום בשורה.
 // מחרוזת שמתחילה ב-✓ מוצגת כתקינה; כל שאר המחרוזות כחריגה.
 function verificationNote(fd) {
-  const texts = [...(fd.afterSunset ? ['✓ (אחרי השקיעה)'] : []), ...(fd.note ?? [])];
+  const texts = [...(fd.afterSunset ? ['✓ העברי לפי האירוע, שהתרחש אחרי השקיעה'] : []), ...(fd.note ?? [])];
   return (texts.length ? texts : ['✓']).map(text => ({ text, ok: text.startsWith('✓') }));
 }
 
