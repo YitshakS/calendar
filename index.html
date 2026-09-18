@@ -67,8 +67,13 @@
   .summary-tables{ display:flex; gap:6mm; height:calc(100% - 14mm); }
   .summary-table{ flex:1; border-collapse:collapse; font-size:10px; align-self:start; table-layout:fixed; width:100%; }
   .summary-table th{ text-align:right; border-bottom:2px solid var(--line-strong); padding:1.2mm 1.2mm; color:var(--ink-soft); font-weight:600; font-size:9px; }
-  .summary-table td{ padding:0.8mm 1.2mm; border-bottom:1px solid var(--line); vertical-align:top; white-space:nowrap; overflow:visible; text-overflow:clip; }
+  .summary-table td{ padding:0.7mm 1.2mm; vertical-align:top; white-space:nowrap; overflow:visible; text-overflow:clip; }
   .summary-table td.ev{ color:var(--ink); white-space:normal; }
+  .summary-table tr.grp-branch td{ color:var(--pomegranate); font-weight:700; padding-top:1.6mm; border-bottom:1px solid var(--line-strong); }
+  .summary-table tr.grp-branch:first-child td{ padding-top:0.8mm; }
+  .summary-table tr.grp-type td, .summary-table tr.grp-type-row td.ev{ color:var(--ink-soft); font-weight:600; font-size:9px; padding-right:1.5mm; }
+  .summary-table tr.grp-type td{ padding-top:0.3mm; padding-bottom:0; line-height:1.1; }
+  .summary-table tbody tr:not(.grp-branch):not(.grp-type):not(.grp-type-row) td.ev{ padding-right:4.5mm; }
   .summary-table td.heb-date{ color:var(--gold); font-weight:600; white-space:nowrap; }
   .summary-table td.greg-date{ color:var(--ink-soft); white-space:nowrap; direction:ltr; text-align:left; }
   .summary-table td.note{ font-size:9px; white-space:normal; overflow:visible; text-overflow:clip; line-height:1.25; }
@@ -208,21 +213,12 @@ const BIRTHDAY_PHOTOS = {
 };
 
 const FAMILY_DATES = [
-  // ענף שליסל יוסף ואסתר (הורים של גדליה שליסל)
-  { name: 'יוסף חיים שליסל ז"ל',    relation: 'סבא', type: 'yahrzeit', day: 26, m: months.SIVAN, year: 5767, greg: '2007-06-12' },
-  { name: 'אסתר שליסל ז"ל',         relation: 'סבתא', type: 'yahrzeit', day: 6,  m: months.SHVAT, year: 5760, greg: '2000-01-12', afterSunset:true },
-  { name: 'לאונרד שליסל ז"ל',       type: 'yahrzeit', day: 17, m: months.SHVAT, year: 5718, greg: '1958-02-07' },
-
-  // ענף גרטנר יצחק ורבקה (הורים של בת ציון שליסל)
-  { name: 'יצחק גרטנר ז"ל',         relation: 'סבא', type: 'yahrzeit', day: 13, m: months.SIVAN, year: 5718, greg: '1958-06-01' },
-  { name: 'אסתר רבקה גרטנר ז"ל',    relation: 'סבתא', type: 'yahrzeit', day: 25, m: months.TAMUZ, year: 5750, greg: '1990-07-18' },
-
-  // ענף שליסל גדליה ובת ציון (הורים של קובי, גולדי ויצחק)
+  { branch: 'שליסל גדליה ובת ציון' }, // הורים של קובי, גולדי ויצחק
   { name: 'בת ציון שליסל',          type: 'birthday', day: 28, m: months.ELUL,     year: 5702, greg: '1942-09-10', note:['באקסל כתוב 8.9.1942'] },
   { name: 'גדליה שליסל',            type: 'birthday', day: 6,  m: months.TISHREI,  year: 5703, greg: '1942-09-17' },
   { name: 'בת ציון וגדליה שליסל',   type: 'anniversary', day: 25, m: months.ELUL,  year: 5734, greg: '1974-09-12' },
 
-  // ענף שליסל קובי ואורלי (הבן של גדליה ובת ציון)
+  { branch: 'שליסל קובי ואורלי' }, // הבן של גדליה ובת ציון
   { name: 'קובי שליסל',             type: 'birthday', day: 24, m: months.ELUL,     year: 5735, greg: '1975-08-31' },
   { name: 'אורלי שליסל',            type: 'birthday', day: 8,  m: months.NISAN,    year: 5738, greg: '1978-04-15' },
   { name: 'אורלי וקובי שליסל',      type: 'anniversary', day: 26, m: months.SHVAT, year: 5759, greg: '1999-02-11', afterSunset:true },
@@ -230,7 +226,7 @@ const FAMILY_DATES = [
   { name: 'הודיה שליסל',            type: 'birthday', day: 4,  m: months.CHESHVAN, year: 5768, greg: '2007-10-16' },
   { name: 'נעמה שליסל',             type: 'birthday', day: 30, m: months.SIVAN,    year: 5771, greg: '2011-07-01', afterSunset:true },
 
-  // ענף נוסרתי גולדי ויניב (הבת של גדליה ובת ציון)
+  { branch: 'נוסרתי גולדי ויניב' }, // הבת של גדליה ובת ציון
   { name: 'יניב נוסרתי',            type: 'birthday', day: 16, m: months.TISHREI,  year: 5736, greg: '1975-09-21', note:['באקסל כתוב י״ז בתשרי'] },
   { name: 'גולדי נוסרתי',           type: 'birthday', day: 9,  m: months.ELUL,     year: 5737, greg: '1977-08-23' },
   { name: 'גולדי ויניב נוסרתי',     type: 'anniversary', day: 5,  m: months.TAMUZ, year: 5761, greg: '2001-06-26' },
@@ -239,7 +235,7 @@ const FAMILY_DATES = [
   { name: 'אמיתי נוסרתי',           type: 'birthday', day: 22, m: months.NISAN,    year: 5771, greg: '2011-04-26' },
   { name: 'אוריה נוסרתי',           type: 'birthday', day: 16, m: months.TEVET,    year: 5776, greg: '2015-12-28' },
 
-  // ענף שליסל יצחק ואיילת (הבן של גדליה ובת ציון)
+  { branch: 'שליסל יצחק ואיילת' }, // הבן של גדליה ובת ציון
   { name: 'יצחק שליסל',            type: 'birthday', day: 13, m: months.ELUL,     year: 5738, greg: '1978-09-15' },
   { name: 'איילת שליסל',            type: 'birthday', day: 4,  m: months.TAMUZ,    year: 5745, greg: '1985-06-23' },
   { name: 'איילת ויצחק שליסל',      type: 'anniversary', day: 7,  m: months.NISAN, year: 5767, greg: '2007-03-26' },
@@ -249,24 +245,33 @@ const FAMILY_DATES = [
   { name: 'גפן שליסל',              type: 'birthday', day: 18, m: months.NISAN,    year: 5775, greg: '2015-04-07' },
   { name: 'תכלת שליסל',             type: 'birthday', day: 16, m: months.ELUL,     year: 5776, greg: '2016-09-19' },
 
-  // ענף שליסל צוריאל ואפרת (הבן של קובי ואורלי)
-  { name: 'צוריאל שליסל',           type: 'birthday', day: 24, m: months.SIVAN,    year: 5761, greg: '2001-06-15' },
+  { branch: 'שליסל צוריאל ואפרת' }, // הבן של קובי ואורלי
   { name: 'אפרת שליסל',             type: 'birthday', day: 6,  m: months.ADAR_II,  year: 5760, greg: '2000-03-13', },
+  { name: 'צוריאל שליסל',           type: 'birthday', day: 24, m: months.SIVAN,    year: 5761, greg: '2001-06-15' },
   { name: 'אפרת וצוריאל שליסל',     type: 'anniversary', day: 25, m: months.ADAR_II, year: 5784, greg: '2024-04-04', },
   { name: 'יעלה שליסל',             type: 'birthday', day: 27, m: months.CHESHVAN, year: 5786, greg: '2025-11-18', },
 
-  // ענף נוזר שיראל ורועי (הבת של גולדי ויניב)
-  { name: 'שיראל נוזר',             type: 'birthday', day: 29, m: months.ADAR_I,   year: 5762, greg: '2002-03-12', afterSunset:true },
+  { branch: 'נוזר שיראל ורועי' }, // הבת של גולדי ויניב
   { name: 'רועי נוזר',              type: 'birthday', day: 15, m: months.SIVAN,    year: 5761, greg: '2001-06-05', afterSunset:true },
+  { name: 'שיראל נוזר',             type: 'birthday', day: 29, m: months.ADAR_I,   year: 5762, greg: '2002-03-12', afterSunset:true },
   { name: 'שיראל ורועי נוזר',       type: 'anniversary', day: 10, m: months.ELUL, year: 5786, greg: '2026-08-23' },
 
-  // ענף נוסרתי איתמר ורות אלישבע (הבן של גולדי ויניב)
+  { branch: 'נוסרתי איתמר ורות אלישבע' }, // הבן של גולדי ויניב
   { name: 'איתמר נוסרתי',           type: 'birthday', day: 9,  m: months.NISAN,    year: 5763, greg: '2003-04-11' },
   { name: 'רות אלישבע נוסרתי',      type: 'birthday', day: 8,  m: months.TEVET,    year: 5764, greg: '2004-01-01', afterSunset:true },
   { name: 'רות אלישבע ואיתמר נוסרתי', type: 'anniversary', day: 15, m: months.SIVAN,  year: 5785, greg: '2025-06-11' },
   { name: 'יוסף שאול נוסרתי',       type: 'birthday', day: 7,  m: months.SIVAN,    year: 5786, greg: '2026-05-23', note:['באקסל כתוב 31.5.2026'] },
 
-  // ענף ממתין — מהאקסל, נאספו אך לא הוחלט להציג בלוח (hidden: true → לא נכנס ל-FAMILY_EVENTS)
+  { branch: 'שליסל יוסף חיים ואסתר' }, // הורים של גדליה שליסל
+  { name: 'יוסף חיים שליסל ז"ל',    relation: 'סבא', type: 'yahrzeit', day: 26, m: months.SIVAN, year: 5767, greg: '2007-06-12' },
+  { name: 'אסתר שליסל ז"ל',         relation: 'סבתא', type: 'yahrzeit', day: 6,  m: months.SHVAT, year: 5760, greg: '2000-01-12', afterSunset:true },
+  { name: 'לאונרד שליסל ז"ל',       type: 'yahrzeit', day: 17, m: months.SHVAT, year: 5718, greg: '1958-02-07' },
+
+  { branch: 'גרטנר יצחק ואסתר רבקה' }, // הורים של בת ציון שליסל
+  { name: 'יצחק גרטנר ז"ל',         relation: 'סבא', type: 'yahrzeit', day: 13, m: months.SIVAN, year: 5718, greg: '1958-06-01' },
+  { name: 'אסתר רבקה גרטנר ז"ל',    relation: 'סבתא', type: 'yahrzeit', day: 25, m: months.TAMUZ, year: 5750, greg: '1990-07-18' },
+
+  { branch: 'ממתין' }, // מהאקסל, נאספו אך לא הוחלט להציג בלוח (hidden: true → לא נכנס ל-FAMILY_EVENTS)
   { name: 'פייגה שליסל ז"ל',        type: 'yahrzeit', day: 3,  m: months.IYYAR, year: 5674, greg: '1914-04-29', hidden: true },
   { name: 'לואיס שליסל ז"ל',        type: 'yahrzeit', day: 9,  m: months.NISAN, year: 5675, greg: '1915-03-24', hidden: true },
   { name: 'רוזי שליסל ז"ל',         type: 'yahrzeit', day: 19, m: months.ELUL,  year: 5735, greg: '1975-08-26', hidden: true },
@@ -276,7 +281,7 @@ const FAMILY_DATES = [
   { name: 'יוסף חיים שליסל ז"ל',    type: 'birthday', day: 2,  m: months.TEVET, year: 5673, greg: '1912-12-12', hidden: true },
   { name: 'אסתר שליסל ז"ל',         type: 'birthday', day: 28, m: months.TAMUZ, year: 5674, greg: '1914-07-22', hidden: true },
   { name: 'יצחק ואסתר רבקה גרטנר ז"ל', type: 'anniversary', hidden: true }, // אין תאריך באקסל
-  { name: 'יוסף ואסתר שליסל ז"ל',   type: 'anniversary', hidden: true }, // אין תאריך באקסל
+  { name: 'יוסף חיים ואסתר שליסל ז"ל',   type: 'anniversary', hidden: true }, // אין תאריך באקסל
 ];
 
 // afterSunset: האירוע אושר כמתרחש אחרי השקיעה (ולכן היום העברי כבר התקדם) —
@@ -353,6 +358,17 @@ const DST_CHANGE = {}; // dateKey -> 'winter' | 'summer' — נשמר על הי�
   }
 }
 
+// שיוך כל רשומה לענף שלה — נגזר מסמני { branch } שבמערך, לכותרות שבטבלה
+const BRANCH_ORDER = [];
+const BRANCH_OF = new Map();
+{
+  let cur = null;
+  for (const fd of FAMILY_DATES) {
+    if (fd.branch) { cur = fd.branch; BRANCH_ORDER.push(cur); continue; }
+    BRANCH_OF.set(fd, cur);
+  }
+}
+
 // ── תאריכי משפחה: מהתאריך העברי המקורי (FAMILY_DATES) מחשבים את ההתרחשות
 //    בכל שנה עברית שהלוח מכסה — hebcal's getBirthdayOrAnniversary/getYahrzeit
 //    כבר יודעים לטפל נכון באדר (אדר א׳/ב׳) בשנים מעוברות ────────────────
@@ -360,6 +376,7 @@ const FAMILY_EVENTS = new Map(); // dateKey -> { type, text }[]
 {
   const yearsInRange = new Set(MONTHS.map(mo => mo.y));
   for (const fd of FAMILY_DATES) {
+    if (fd.branch) continue; // סמן ענף, לא אירוע
     if (fd.hidden) continue; // נאסף לתיעוד בלבד — לא מוצג בלוח המודפס
     const origGreg = new HDate(fd.day, fd.m, fd.year).greg();
     for (const targetYear of yearsInRange) {
@@ -374,10 +391,11 @@ const FAMILY_EVENTS = new Map(); // dateKey -> { type, text }[]
         : `יארצייט`;
       const line2 = fd.type === 'yahrzeit' ? `ל${fd.relation ? fd.relation + ' ' : ''}${fd.name}` : `ל${fd.name}`;
       const text = `${line1} ${line2}`;
-      // בטבלה אין מספר: התאריך שם הוא של ההתרחשות הראשונה, לא של השנה הנוכחית.
-      // מקף מפריד בין סוג האירוע לבין מי שהוא שייך לו — אחיד לשלושת הסוגים.
-      const tableText = `${fd.type === 'birthday' ? 'יום הולדת' : fd.type === 'anniversary' ? 'יום נישואין' : 'יארצייט'} - `
-        + (fd.type === 'yahrzeit' && fd.relation ? `${fd.relation} ` : '') + fd.name;
+      // בטבלה רק השם הפרטי: סוג האירוע ושם המשפחה כבר כתובים בכותרות שמעל,
+      // והתאריך שם הוא של ההתרחשות הראשונה — ולכן גם מספר השנים לא שייך שם.
+      const surname = (BRANCH_OF.get(fd) ?? '').split(' ')[0];
+      const shortName = fd.name.includes(` ${surname}`) ? fd.name.replace(` ${surname}`, '') : fd.name;
+      const tableText = shortName;
       const fkey = dateKey(hd.greg());
       if (!FAMILY_EVENTS.has(fkey)) FAMILY_EVENTS.set(fkey, []);
       FAMILY_EVENTS.get(fkey).push({ type: fd.type, text, tableText, line1, line2, name: fd.name, orig: fd });
@@ -814,31 +832,64 @@ const fmtGregIso = (iso) => {
 // מורכב מחלקי הספרייה עצמה — בלי לפרק את המחרוזת שהיא מחזירה.
 const fmtHeb = (hd) =>
   `${gematriya(hd.getDate())} ב${Locale.gettext(hd.getMonthName(), 'he')} ${gematriya(hd.getFullYear())}`;
-const summaryRowHtml = (r) => `
-  <tr>
-    <td class="ev">${r.text}</td>
+const summaryRowHtml = (r, cls = '', label = null) => `
+  <tr${cls ? ` class="${cls}"` : ''}>
+    <td class="ev">${label ?? r.text}</td>
     <td class="heb-date">${fmtHeb(new HDate(r.orig.day, r.orig.m, r.orig.year))}</td>
     <td class="greg-date">${fmtGregIso(r.orig.greg)}</td>
     <td class="note">${r.note.map(p => `<span class="note-part note-${p.ok ? 'ok' : 'diff'}">${p.text}</span>`).join('<span class="note-sep">, </span>')}</td>
   </tr>`;
-const summaryTableHtml = (rows) => `
+const TYPE_LABEL = { birthday: 'ימי הולדת', yahrzeit: 'יארצייטים' };
+const TYPE_ORDER = ['birthday', 'yahrzeit'];
+// "נישואין" היא תת-כותרת שנושאת בעצמה את התאריך: השמות כבר בכותרת הענף,
+// ולכן אין תחתיה שורה נפרדת.
+const entryHtml = (e) =>
+    e.kind === 'branch'   ? `<tr class="grp-branch"><td colspan="4">${e.text}</td></tr>`
+  : e.kind === 'type'     ? `<tr class="grp-type"><td colspan="4">${e.text}</td></tr>`
+  : e.kind === 'typeRow'  ? summaryRowHtml(e.row, 'grp-type-row', e.text)
+  : summaryRowHtml(e.row);
+const summaryTableHtml = (entries) => `
   <table class="summary-table">
     <colgroup><col style="width:33%"><col style="width:19%"><col style="width:12%"><col style="width:36%"></colgroup>
     <thead><tr><th>אירוע</th><th>עברי</th><th>לועזי</th><th>הערות</th></tr></thead>
-    <tbody>${rows.map(summaryRowHtml).join('')}</tbody>
+    <tbody>${entries.map(entryHtml).join('')}</tbody>
   </table>`;
 
 const summaryPage = document.createElement('div');
 summaryPage.className = 'page summary-page';
-const summaryHalf = Math.ceil(TABLE_ROWS.length / 2);
+// סדר התצוגה בטבלה: לפי סדר הענפים ב-FAMILY_DATES (מיון יציב — שתי הופעות
+// של אותה רשומה נשארות ביניהן לפי התאריך). לא מסנן ולא משנה אף שורה.
+const FD_ORDER = new Map(FAMILY_DATES.map((fd, i) => [fd, i]));
+TABLE_ROWS.sort((a, b) => FD_ORDER.get(a.orig) - FD_ORDER.get(b.orig));
+
+// כותרת ענף, ובתוכה כותרת לכל סוג אירוע — כל שורה מופיעה בדיוק פעם אחת
+const SUMMARY_ENTRIES = [];
+for (const branch of BRANCH_ORDER) {
+  const inBranch = TABLE_ROWS.filter(r => BRANCH_OF.get(r.orig) === branch);
+  if (!inBranch.length) continue;
+  SUMMARY_ENTRIES.push({ kind: 'branch', text: branch });
+  const anniversaries = inBranch.filter(r => r.type === 'anniversary');
+  if (anniversaries.length) SUMMARY_ENTRIES.push({ kind: 'typeRow', text: 'נישואין', row: anniversaries[0] });
+  for (const extra of anniversaries.slice(1)) SUMMARY_ENTRIES.push({ kind: 'row', row: extra });
+  for (const type of TYPE_ORDER) {
+    const rows = inBranch.filter(r => r.type === type);
+    if (!rows.length) continue;
+    SUMMARY_ENTRIES.push({ kind: 'type', text: TYPE_LABEL[type] });
+    for (const row of rows) SUMMARY_ENTRIES.push({ kind: 'row', row });
+  }
+}
+// החלוקה לשתי הטבלאות היא תמיד בתחילת ענף, כדי שכותרת לא תינתק משורותיה
+const branchStarts = SUMMARY_ENTRIES.map((e, i) => e.kind === 'branch' ? i : -1).filter(i => i > 0);
+const summaryMid = SUMMARY_ENTRIES.length / 2;
+const summaryHalf = branchStarts.reduce((best, i) => Math.abs(i - summaryMid) < Math.abs(best - summaryMid) ? i : best, branchStarts[0]);
 summaryPage.innerHTML = `
   <div class="month-head">
     <div class="heb">כל אירועי המשפחה בלוח</div>
-    <div class="greg">${TABLE_ROWS.length} אירועים, לפי סדר הופעתם בלוח</div>
+    <div class="greg">${TABLE_ROWS.length} אירועים, לפי ענפי המשפחה</div>
   </div>
   <div class="summary-tables">
-    ${summaryTableHtml(TABLE_ROWS.slice(0, summaryHalf))}
-    ${summaryTableHtml(TABLE_ROWS.slice(summaryHalf))}
+    ${summaryTableHtml(SUMMARY_ENTRIES.slice(0, summaryHalf))}
+    ${summaryTableHtml(SUMMARY_ENTRIES.slice(summaryHalf))}
   </div>
 `;
 root.insertBefore(summaryPage, root.children[1]);
