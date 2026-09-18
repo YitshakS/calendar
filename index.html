@@ -208,49 +208,38 @@ const BIRTHDAY_PHOTOS = {
 };
 
 const FAMILY_DATES = [
-  // ענף גרטנר יצחק ורבקה (סבא-רבא וסבתא-רבא, צד אמא)
-  { name: 'יצחק גרטנר ז"ל',         relation: 'סבא', type: 'yahrzeit', day: 13, m: months.SIVAN, year: 5718, greg: '1958-06-01' },
-  { name: 'אסתר רבקה גרטנר ז"ל',    relation: 'סבתא', type: 'yahrzeit', day: 25, m: months.TAMUZ, year: 5750, greg: '1990-07-18' },
-
-  // ענף שליסל יוסף ואסתר (סבא-רבא וסבתא-רבא, צד אבא)
+  // ענף שליסל יוסף ואסתר (הורים של גדליה שליסל)
   { name: 'יוסף חיים שליסל ז"ל',    relation: 'סבא', type: 'yahrzeit', day: 26, m: months.SIVAN, year: 5767, greg: '2007-06-12' },
   { name: 'אסתר שליסל ז"ל',         relation: 'סבתא', type: 'yahrzeit', day: 6,  m: months.SHVAT, year: 5760, greg: '2000-01-12', afterSunset:true },
   { name: 'לאונרד שליסל ז"ל',       type: 'yahrzeit', day: 17, m: months.SHVAT, year: 5718, greg: '1958-02-07' },
 
-  // ענף שליסל גדליה ובת ציון (סבא וסבתא)
+  // ענף גרטנר יצחק ורבקה (הורים של בת ציון שליסל)
+  { name: 'יצחק גרטנר ז"ל',         relation: 'סבא', type: 'yahrzeit', day: 13, m: months.SIVAN, year: 5718, greg: '1958-06-01' },
+  { name: 'אסתר רבקה גרטנר ז"ל',    relation: 'סבתא', type: 'yahrzeit', day: 25, m: months.TAMUZ, year: 5750, greg: '1990-07-18' },
+
+  // ענף שליסל גדליה ובת ציון (הורים של קובי, גולדי ויצחק)
   { name: 'בת ציון שליסל',          type: 'birthday', day: 28, m: months.ELUL,     year: 5702, greg: '1942-09-10', note:['באקסל כתוב 8.9.1942'] },
   { name: 'גדליה שליסל',            type: 'birthday', day: 6,  m: months.TISHREI,  year: 5703, greg: '1942-09-17' },
   { name: 'בת ציון וגדליה שליסל',   type: 'anniversary', day: 25, m: months.ELUL,  year: 5734, greg: '1974-09-12' },
 
-  // ענף שליסל קובי ואורלי (הבן הבכור)
+  // ענף שליסל קובי ואורלי (הבן של גדליה ובת ציון)
   { name: 'קובי שליסל',             type: 'birthday', day: 24, m: months.ELUL,     year: 5735, greg: '1975-08-31' },
   { name: 'אורלי שליסל',            type: 'birthday', day: 8,  m: months.NISAN,    year: 5738, greg: '1978-04-15' },
   { name: 'אורלי וקובי שליסל',      type: 'anniversary', day: 26, m: months.SHVAT, year: 5759, greg: '1999-02-11', afterSunset:true },
-  { name: 'צוריאל שליסל',           type: 'birthday', day: 24, m: months.SIVAN,    year: 5761, greg: '2001-06-15' },
   { name: 'יונתן שליסל',            type: 'birthday', day: 2,  m: months.SIVAN,    year: 5764, greg: '2004-05-22' },
   { name: 'הודיה שליסל',            type: 'birthday', day: 4,  m: months.CHESHVAN, year: 5768, greg: '2007-10-16' },
   { name: 'נעמה שליסל',             type: 'birthday', day: 30, m: months.SIVAN,    year: 5771, greg: '2011-07-01', afterSunset:true },
-  { name: 'אפרת שליסל',             type: 'birthday', day: 6,  m: months.ADAR_II,  year: 5760, greg: '2000-03-13', },
-  { name: 'אפרת וצוריאל שליסל',     type: 'anniversary', day: 25, m: months.ADAR_II, year: 5784, greg: '2024-04-04', },
-  { name: 'יעלה שליסל',             type: 'birthday', day: 27, m: months.CHESHVAN, year: 5786, greg: '2025-11-18', },
 
-  // ענף נוסרתי גולדי ויניב (הבת האמצעית)
+  // ענף נוסרתי גולדי ויניב (הבת של גדליה ובת ציון)
   { name: 'יניב נוסרתי',            type: 'birthday', day: 16, m: months.TISHREI,  year: 5736, greg: '1975-09-21', note:['באקסל כתוב י״ז בתשרי'] },
   { name: 'גולדי נוסרתי',           type: 'birthday', day: 9,  m: months.ELUL,     year: 5737, greg: '1977-08-23' },
   { name: 'גולדי ויניב נוסרתי',     type: 'anniversary', day: 5,  m: months.TAMUZ, year: 5761, greg: '2001-06-26' },
-  { name: 'שיראל נוזר',             type: 'birthday', day: 29, m: months.ADAR_I,   year: 5762, greg: '2002-03-12', afterSunset:true },
-  { name: 'רועי נוזר',              type: 'birthday', day: 15, m: months.SIVAN,    year: 5761, greg: '2001-06-05', afterSunset:true },
-  { name: 'שיראל ורועי נוזר',       type: 'anniversary', day: 10, m: months.ELUL, year: 5786, greg: '2026-08-23' },
-  { name: 'איתמר נוסרתי',           type: 'birthday', day: 9,  m: months.NISAN,    year: 5763, greg: '2003-04-11' },
-  { name: 'רות אלישבע נוסרתי',      type: 'birthday', day: 8,  m: months.TEVET,    year: 5764, greg: '2004-01-01', afterSunset:true },
-  { name: 'רות אלישבע ואיתמר נוסרתי', type: 'anniversary', day: 15, m: months.SIVAN,  year: 5785, greg: '2025-06-11' },
   { name: 'אודליה נוסרתי',          type: 'birthday', day: 28, m: months.SHVAT,    year: 5765, greg: '2005-02-07' },
   { name: 'אפרת נוסרתי',            type: 'birthday', day: 11, m: months.KISLEV,   year: 5768, greg: '2007-11-21' },
   { name: 'אמיתי נוסרתי',           type: 'birthday', day: 22, m: months.NISAN,    year: 5771, greg: '2011-04-26' },
   { name: 'אוריה נוסרתי',           type: 'birthday', day: 16, m: months.TEVET,    year: 5776, greg: '2015-12-28' },
-  { name: 'יוסף שאול נוסרתי',       type: 'birthday', day: 7,  m: months.SIVAN,    year: 5786, greg: '2026-05-23', note:['באקסל כתוב 31.5.2026'] },
 
-  // ענף שליסל יצחק ואיילת (הבן הצעיר)
+  // ענף שליסל יצחק ואיילת (הבן של גדליה ובת ציון)
   { name: 'יצחק שליסל',            type: 'birthday', day: 13, m: months.ELUL,     year: 5738, greg: '1978-09-15' },
   { name: 'איילת שליסל',            type: 'birthday', day: 4,  m: months.TAMUZ,    year: 5745, greg: '1985-06-23' },
   { name: 'איילת ויצחק שליסל',      type: 'anniversary', day: 7,  m: months.NISAN, year: 5767, greg: '2007-03-26' },
@@ -259,6 +248,23 @@ const FAMILY_DATES = [
   { name: 'תחיה שליסל',             type: 'birthday', day: 21, m: months.TEVET,    year: 5773, greg: '2013-01-03' },
   { name: 'גפן שליסל',              type: 'birthday', day: 18, m: months.NISAN,    year: 5775, greg: '2015-04-07' },
   { name: 'תכלת שליסל',             type: 'birthday', day: 16, m: months.ELUL,     year: 5776, greg: '2016-09-19' },
+
+  // ענף שליסל צוריאל ואפרת (הבן של קובי ואורלי)
+  { name: 'צוריאל שליסל',           type: 'birthday', day: 24, m: months.SIVAN,    year: 5761, greg: '2001-06-15' },
+  { name: 'אפרת שליסל',             type: 'birthday', day: 6,  m: months.ADAR_II,  year: 5760, greg: '2000-03-13', },
+  { name: 'אפרת וצוריאל שליסל',     type: 'anniversary', day: 25, m: months.ADAR_II, year: 5784, greg: '2024-04-04', },
+  { name: 'יעלה שליסל',             type: 'birthday', day: 27, m: months.CHESHVAN, year: 5786, greg: '2025-11-18', },
+
+  // ענף נוזר שיראל ורועי (הבת של גולדי ויניב)
+  { name: 'שיראל נוזר',             type: 'birthday', day: 29, m: months.ADAR_I,   year: 5762, greg: '2002-03-12', afterSunset:true },
+  { name: 'רועי נוזר',              type: 'birthday', day: 15, m: months.SIVAN,    year: 5761, greg: '2001-06-05', afterSunset:true },
+  { name: 'שיראל ורועי נוזר',       type: 'anniversary', day: 10, m: months.ELUL, year: 5786, greg: '2026-08-23' },
+
+  // ענף נוסרתי איתמר ורות אלישבע (הבן של גולדי ויניב)
+  { name: 'איתמר נוסרתי',           type: 'birthday', day: 9,  m: months.NISAN,    year: 5763, greg: '2003-04-11' },
+  { name: 'רות אלישבע נוסרתי',      type: 'birthday', day: 8,  m: months.TEVET,    year: 5764, greg: '2004-01-01', afterSunset:true },
+  { name: 'רות אלישבע ואיתמר נוסרתי', type: 'anniversary', day: 15, m: months.SIVAN,  year: 5785, greg: '2025-06-11' },
+  { name: 'יוסף שאול נוסרתי',       type: 'birthday', day: 7,  m: months.SIVAN,    year: 5786, greg: '2026-05-23', note:['באקסל כתוב 31.5.2026'] },
 
   // ענף ממתין — מהאקסל, נאספו אך לא הוחלט להציג בלוח (hidden: true → לא נכנס ל-FAMILY_EVENTS)
   { name: 'פייגה שליסל ז"ל',        type: 'yahrzeit', day: 3,  m: months.IYYAR, year: 5674, greg: '1914-04-29', hidden: true },
