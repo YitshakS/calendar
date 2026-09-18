@@ -368,9 +368,13 @@ const FAMILY_EVENTS = new Map(); // dateKey -> { type, text }[]
         : `יארצייט`;
       const line2 = fd.type === 'yahrzeit' ? `ל${fd.relation ? fd.relation + ' ' : ''}${fd.name}` : `ל${fd.name}`;
       const text = `${line1} ${line2}`;
+      // בטבלה אין מספר: התאריך שם הוא של ההתרחשות הראשונה, לא של השנה הנוכחית.
+      // מקף מפריד בין סוג האירוע לבין מי שהוא שייך לו — אחיד לשלושת הסוגים.
+      const tableText = `${fd.type === 'birthday' ? 'יום הולדת' : fd.type === 'anniversary' ? 'יום נישואין' : 'יארצייט'} - `
+        + (fd.type === 'yahrzeit' && fd.relation ? `${fd.relation} ` : '') + fd.name;
       const fkey = dateKey(hd.greg());
       if (!FAMILY_EVENTS.has(fkey)) FAMILY_EVENTS.set(fkey, []);
-      FAMILY_EVENTS.get(fkey).push({ type: fd.type, text, line1, line2, name: fd.name, orig: fd });
+      FAMILY_EVENTS.get(fkey).push({ type: fd.type, text, tableText, line1, line2, name: fd.name, orig: fd });
     }
   }
 }
@@ -699,7 +703,7 @@ for (const { m: monthNum, y: year } of MONTHS) {
       }).join('');
 
     for (const fe of (FAMILY_EVENTS.get(key) ?? [])) {
-      SUMMARY_ROWS.push({ type: fe.type, name: fe.name, text: fe.text, hd, greg, orig: fe.orig, note: verificationNote(fe.orig) });
+      SUMMARY_ROWS.push({ type: fe.type, name: fe.name, text: fe.tableText, hd, greg, orig: fe.orig, note: verificationNote(fe.orig) });
     }
 
     const ft = FAST_TIMES.get(key);
