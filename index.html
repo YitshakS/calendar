@@ -64,10 +64,13 @@
   .month-head .greg{ font-size:16px; color:var(--gold); font-weight:600; }
 
   /* ── עמוד סיכום אירועי משפחה ──────────────────────────────────── */
-  .summary-tables{ display:flex; gap:6mm; height:calc(100% - 14mm); }
+  /* עמוד הסיכום בלבד: פחות שוליים עליונים ופחות מקום שמור לכותרת, כדי שכל
+     האירועים — כולל אלה שלא נכנסו ללוח — ייכנסו בשתי עמודות */
+  .summary-page{ padding-top:18mm; }
+  .summary-tables{ display:flex; gap:6mm; height:calc(100% - 13mm); }
   .summary-table{ flex:1; border-collapse:collapse; font-size:10px; align-self:start; table-layout:fixed; width:100%; }
   .summary-table th{ text-align:right; border-bottom:2px solid var(--line-strong); padding:1.2mm 1.2mm; color:var(--ink-soft); font-weight:600; font-size:9px; }
-  .summary-table td{ padding:0.7mm 1.2mm; vertical-align:top; white-space:nowrap; overflow:visible; text-overflow:clip; }
+  .summary-table td{ padding:0.45mm 1.2mm; vertical-align:top; white-space:nowrap; overflow:visible; text-overflow:clip; }
   .summary-table td.ev{ color:var(--ink); white-space:normal; }
   .summary-table tr.grp-branch td{ color:var(--pomegranate); font-weight:700; padding-top:1.6mm; border-bottom:1px solid var(--line-strong); }
   .summary-table tr.grp-branch:first-child td{ padding-top:0.8mm; }
@@ -271,7 +274,7 @@ const FAMILY_DATES = [
   { name: 'יצחק גרטנר ז"ל',         relation: 'סבא', type: 'yahrzeit', day: 13, m: months.SIVAN, year: 5718, greg: '1958-06-01' },
   { name: 'אסתר רבקה גרטנר ז"ל',    relation: 'סבתא', type: 'yahrzeit', day: 25, m: months.TAMUZ, year: 5750, greg: '1990-07-18' },
 
-  { branch: 'ממתין' }, // מהאקסל, נאספו אך לא הוחלט להציג בלוח (hidden: true → לא נכנס ל-FAMILY_EVENTS)
+  { branch: 'מהאקסל — לא נכנסו ללוח' }, // נאספו לתיעוד; hidden: true → לא נכנס ל-FAMILY_EVENTS, רק לטבלה
   { name: 'פייגה שליסל ז"ל',        type: 'yahrzeit', day: 3,  m: months.IYYAR, year: 5674, greg: '1914-04-29', hidden: true },
   { name: 'לואיס שליסל ז"ל',        type: 'yahrzeit', day: 9,  m: months.NISAN, year: 5675, greg: '1915-03-24', hidden: true },
   { name: 'רוזי שליסל ז"ל',         type: 'yahrzeit', day: 19, m: months.ELUL,  year: 5735, greg: '1975-08-26', hidden: true },
@@ -822,6 +825,15 @@ const TABLE_ROWS = SUMMARY_ROWS.filter(r => {
   return !(sibling && noteKey(sibling) === noteKey(r));
 });
 
+// הרשומות שלא נכנסו ללוח (hidden) מצטרפות לטבלה בלבד, ישירות מהמערך —
+// כדי שהטבלה תשקף את כל מה שנאסף, גם מה שהוחלט לא להדפיס בלוח עצמו.
+for (const fd of FAMILY_DATES) {
+  if (fd.branch || !fd.hidden) continue;
+  const surname = (BRANCH_OF.get(fd) ?? '').split(' ')[0];
+  const text = fd.name.includes(` ${surname}`) ? fd.name.replace(` ${surname}`, '') : fd.name;
+  TABLE_ROWS.push({ type: fd.type, name: fd.name, text, orig: fd, note: verificationNote(fd) });
+}
+
 // עמודות התאריך בטבלה — מ-FAMILY_DATES, אותו מקור שממנו נבנה הלוח עצמו.
 // מהמחרוזת עצמה (YYYY-MM-DD), בלי מעבר דרך Date — כדי שאזור זמן לא יזיז תאריך
 const fmtGregIso = (iso) => {
@@ -835,8 +847,8 @@ const fmtHeb = (hd) =>
 const summaryRowHtml = (r, cls = '', label = null) => `
   <tr${cls ? ` class="${cls}"` : ''}>
     <td class="ev">${label ?? r.text}</td>
-    <td class="heb-date">${fmtHeb(new HDate(r.orig.day, r.orig.m, r.orig.year))}</td>
-    <td class="greg-date">${fmtGregIso(r.orig.greg)}</td>
+    <td class="heb-date">${r.orig.day ? fmtHeb(new HDate(r.orig.day, r.orig.m, r.orig.year)) : '???'}</td>
+    <td class="greg-date">${r.orig.greg ? fmtGregIso(r.orig.greg) : '???'}</td>
     <td class="note">${r.note.map(p => `<span class="note-part note-${p.ok ? 'ok' : 'diff'}">${p.text}</span>`).join('<span class="note-sep">, </span>')}</td>
   </tr>`;
 const TYPE_LABEL = { birthday: 'ימי הולדת', yahrzeit: 'יארצייטים' };
@@ -868,9 +880,15 @@ for (const branch of BRANCH_ORDER) {
   const inBranch = TABLE_ROWS.filter(r => BRANCH_OF.get(r.orig) === branch);
   if (!inBranch.length) continue;
   SUMMARY_ENTRIES.push({ kind: 'branch', text: branch });
+  // כשיש חתונה אחת היא שייכת לזוג שבכותרת, ולכן התווית עצמה נושאת את התאריך.
+  // בענף שאינו של זוג יחיד צריך לראות שם בכל שורה, ולכן כותרת רגילה מעליהן.
   const anniversaries = inBranch.filter(r => r.type === 'anniversary');
-  if (anniversaries.length) SUMMARY_ENTRIES.push({ kind: 'typeRow', text: 'נישואין', row: anniversaries[0] });
-  for (const extra of anniversaries.slice(1)) SUMMARY_ENTRIES.push({ kind: 'row', row: extra });
+  if (anniversaries.length === 1) {
+    SUMMARY_ENTRIES.push({ kind: 'typeRow', text: 'נישואין', row: anniversaries[0] });
+  } else if (anniversaries.length > 1) {
+    SUMMARY_ENTRIES.push({ kind: 'type', text: 'נישואין' });
+    for (const row of anniversaries) SUMMARY_ENTRIES.push({ kind: 'row', row });
+  }
   for (const type of TYPE_ORDER) {
     const rows = inBranch.filter(r => r.type === type);
     if (!rows.length) continue;
@@ -884,8 +902,7 @@ const summaryMid = SUMMARY_ENTRIES.length / 2;
 const summaryHalf = branchStarts.reduce((best, i) => Math.abs(i - summaryMid) < Math.abs(best - summaryMid) ? i : best, branchStarts[0]);
 summaryPage.innerHTML = `
   <div class="month-head">
-    <div class="heb">כל אירועי המשפחה בלוח</div>
-    <div class="greg">${TABLE_ROWS.length} אירועים, לפי ענפי המשפחה</div>
+    <div class="heb">אירועים משפחתיים</div>
   </div>
   <div class="summary-tables">
     ${summaryTableHtml(SUMMARY_ENTRIES.slice(0, summaryHalf))}
