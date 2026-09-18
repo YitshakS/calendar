@@ -66,7 +66,7 @@
   /* ── עמוד סיכום אירועי משפחה ──────────────────────────────────── */
   /* עמוד הסיכום בלבד: פחות שוליים עליונים ופחות מקום שמור לכותרת, כדי שכל
      האירועים — כולל אלה שלא נכנסו ללוח — ייכנסו בשתי עמודות */
-  .summary-page{ padding-top:18mm; }
+  .summary-page{ padding-top:16mm; }
   .summary-tables{ display:flex; gap:6mm; height:calc(100% - 13mm); }
   .summary-table{ flex:1; border-collapse:collapse; font-size:10px; align-self:start; table-layout:fixed; width:100%; }
   .summary-table th{ text-align:right; border-bottom:2px solid var(--line-strong); padding:1.2mm 1.2mm; color:var(--ink-soft); font-weight:600; font-size:9px; }
@@ -217,7 +217,7 @@ const BIRTHDAY_PHOTOS = {
 
 const FAMILY_DATES = [
   { branch: 'שליסל גדליה ובת ציון' }, // הורים של קובי, גולדי ויצחק
-  { name: 'בת ציון שליסל',          type: 'birthday', day: 28, m: months.ELUL,     year: 5702, greg: '1942-09-10', note:['באקסל כתוב 8.9.1942'] },
+  { name: 'בת ציון שליסל',          type: 'birthday', day: 28, m: months.ELUL,     year: 5702, greg: '1942-09-10', note:['התאריך לפי מה שאמא רשמה, קובי רשם כ״ו באלול ה׳תש״ב 08.09.1942'] },
   { name: 'גדליה שליסל',            type: 'birthday', day: 6,  m: months.TISHREI,  year: 5703, greg: '1942-09-17' },
   { name: 'בת ציון וגדליה שליסל',   type: 'anniversary', day: 25, m: months.ELUL,  year: 5734, greg: '1974-09-12' },
 
@@ -263,7 +263,7 @@ const FAMILY_DATES = [
   { name: 'איתמר נוסרתי',           type: 'birthday', day: 9,  m: months.NISAN,    year: 5763, greg: '2003-04-11' },
   { name: 'רות אלישבע נוסרתי',      type: 'birthday', day: 8,  m: months.TEVET,    year: 5764, greg: '2004-01-01', afterSunset:true },
   { name: 'רות אלישבע ואיתמר נוסרתי', type: 'anniversary', day: 15, m: months.SIVAN,  year: 5785, greg: '2025-06-11' },
-  { name: 'יוסף שאול נוסרתי',       type: 'birthday', day: 7,  m: months.SIVAN,    year: 5786, greg: '2026-05-23', note:['באקסל כתוב 31.5.2026'] },
+  { name: 'יוסף שאול נוסרתי',       type: 'birthday', day: 7,  m: months.SIVAN,    year: 5786, greg: '2026-05-23', note:['התאריך לפי מה שגולדי רשמה, קובי רשם 31.05.2026'] },
 
   { branch: 'שליסל יוסף חיים ואסתר' }, // הורים של גדליה שליסל
   { name: 'יוסף חיים שליסל ז"ל',    relation: 'סבא', type: 'yahrzeit', day: 26, m: months.SIVAN, year: 5767, greg: '2007-06-12' },
@@ -271,7 +271,7 @@ const FAMILY_DATES = [
   { name: 'לאונרד שליסל ז"ל',       type: 'yahrzeit', day: 17, m: months.SHVAT, year: 5718, greg: '1958-02-07' },
 
   { branch: 'גרטנר יצחק ואסתר רבקה' }, // הורים של בת ציון שליסל
-  { name: 'יצחק גרטנר ז"ל',         relation: 'סבא', type: 'yahrzeit', day: 20, m: months.SIVAN, year: 5718, greg: '1958-06-08', note:['קובי רשם י״ג בסִיוָן ה׳תשי״ח 01.06.1958'] },
+  { name: 'יצחק גרטנר ז"ל',         relation: 'סבא', type: 'yahrzeit', day: 20, m: months.SIVAN, year: 5718, greg: '1958-06-08', note:['התאריך לפי מה שאמא רשמה, קובי רשם י״ג בסִיוָן ה׳תשי״ח 01.06.1958'] },
   { name: 'אסתר רבקה גרטנר ז"ל',    relation: 'סבתא', type: 'yahrzeit', day: 25, m: months.TAMUZ, year: 5750, greg: '1990-07-18' },
 
   { branch: 'לא נכנסו ללוח' }, // נאספו לתיעוד; hidden: true → לא נכנס ל-FAMILY_EVENTS, רק לטבלה
