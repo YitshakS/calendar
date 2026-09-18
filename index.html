@@ -843,7 +843,7 @@ const fmtGregIso = (iso) => {
 // כמו renderGematriya של הספרייה, אבל עם בי״ת לפני שם החודש ("ו׳ בתִּשְׁרֵי תש״ג").
 // מורכב מחלקי הספרייה עצמה — בלי לפרק את המחרוזת שהיא מחזירה.
 const fmtHeb = (hd) =>
-  `${gematriya(hd.getDate())} ב${Locale.gettext(hd.getMonthName(), 'he')} ${gematriya(hd.getFullYear())}`;
+  `${gematriya(hd.getDate())} ב${Locale.gettext(hd.getMonthName(), 'he')} ${fullYear(hd.getFullYear())}`;
 const summaryRowHtml = (r, cls = '', label = null) => `
   <tr${cls ? ` class="${cls}"` : ''}>
     <td class="ev">${label ?? r.text}</td>
@@ -862,7 +862,7 @@ const entryHtml = (e) =>
   : summaryRowHtml(e.row);
 const summaryTableHtml = (entries) => `
   <table class="summary-table">
-    <colgroup><col style="width:33%"><col style="width:19%"><col style="width:12%"><col style="width:36%"></colgroup>
+    <colgroup><col style="width:30%"><col style="width:22%"><col style="width:12%"><col style="width:36%"></colgroup>
     <thead><tr><th>אירוע</th><th>עברי</th><th>לועזי</th><th>הערות</th></tr></thead>
     <tbody>${entries.map(entryHtml).join('')}</tbody>
   </table>`;
