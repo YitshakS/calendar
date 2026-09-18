@@ -66,7 +66,7 @@
   /* ── עמוד סיכום אירועי משפחה ──────────────────────────────────── */
   /* עמוד הסיכום בלבד: פחות שוליים עליונים ופחות מקום שמור לכותרת, כדי שכל
      האירועים — כולל אלה שלא נכנסו ללוח — ייכנסו בשתי עמודות */
-  .summary-page{ padding-top:16mm; }
+  .summary-page{ padding-top:14mm; }
   .summary-tables{ display:flex; gap:6mm; height:calc(100% - 13mm); }
   .summary-table{ flex:1; border-collapse:collapse; font-size:10px; align-self:start; table-layout:fixed; width:100%; }
   .summary-table th{ text-align:right; border-bottom:2px solid var(--line-strong); padding:1.2mm 1.2mm; color:var(--ink-soft); font-weight:600; font-size:9px; }
@@ -83,7 +83,7 @@
   .summary-table .note-part.note-ok{ color:var(--olive); }
   .summary-table .note-part.note-diff{ color:var(--pomegranate); font-weight:600; }
   .summary-table .note-part.note-none{ color:var(--ink-soft); font-style:italic; }
-  .summary-table .note-sep{ color:var(--ink-soft); }
+  .summary-table .note-part{ display:block; }
 
   .grid{
     display:grid;
@@ -224,7 +224,7 @@ const FAMILY_DATES = [
   { branch: 'שליסל קובי ואורלי' }, // הבן של גדליה ובת ציון
   { name: 'קובי שליסל',             type: 'birthday', day: 24, m: months.ELUL,     year: 5735, greg: '1975-08-31' },
   { name: 'אורלי שליסל',            type: 'birthday', day: 8,  m: months.NISAN,    year: 5738, greg: '1978-04-15' },
-  { name: 'אורלי וקובי שליסל',      type: 'anniversary', day: 26, m: months.SHVAT, year: 5759, greg: '1999-02-11', afterSunset:true },
+  { name: 'אורלי וקובי שליסל',      type: 'anniversary', day: 26, m: months.SHVAT, year: 5759, greg: '1999-02-11', afterSunset:true, note:['כ״ו אומת מול קובי, אמא רשמה כ״ה'] },
   { name: 'יונתן שליסל',            type: 'birthday', day: 2,  m: months.SIVAN,    year: 5764, greg: '2004-05-22' },
   { name: 'הודיה שליסל',            type: 'birthday', day: 4,  m: months.CHESHVAN, year: 5768, greg: '2007-10-16' },
   { name: 'נעמה שליסל',             type: 'birthday', day: 30, m: months.SIVAN,    year: 5771, greg: '2011-07-01', afterSunset:true },
@@ -849,7 +849,7 @@ const summaryRowHtml = (r, cls = '', label = null) => `
     <td class="ev">${label ?? r.text}</td>
     <td class="heb-date">${r.orig.day ? fmtHeb(new HDate(r.orig.day, r.orig.m, r.orig.year)) : '???'}</td>
     <td class="greg-date">${r.orig.greg ? fmtGregIso(r.orig.greg) : '???'}</td>
-    <td class="note">${r.note.map(p => `<span class="note-part note-${p.ok ? 'ok' : 'diff'}">${p.text}</span>`).join('<span class="note-sep">, </span>')}</td>
+    <td class="note">${r.note.map(p => `<span class="note-part note-${p.ok ? 'ok' : 'diff'}">${p.text}</span>`).join('')}</td>
   </tr>`;
 const TYPE_LABEL = { birthday: 'ימי הולדת', yahrzeit: 'יארצייטים' };
 const TYPE_ORDER = ['birthday', 'yahrzeit'];
